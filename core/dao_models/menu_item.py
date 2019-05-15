@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from ingredient import *
+from dao_models.ingredient import *
 
 MENU_ITEM_ID_ALIAS = "m_id"
 MENU_ITEM_NAME_ALIAS = "m_name"

@@ -1,6 +1,4 @@
-import jsonpickle as jp
-
-from core.scan import Scan
+from dao_models.scan import Scan
 from data_pusher import DataPusher
 
 

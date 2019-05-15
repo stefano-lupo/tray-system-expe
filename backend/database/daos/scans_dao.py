@@ -1,7 +1,7 @@
 from typing import List
 
 from base_dao import BaseDao
-from core.scan import Scan
+from dao_models.scan import Scan
 
 TABLE = "scans"
 ID = "id"

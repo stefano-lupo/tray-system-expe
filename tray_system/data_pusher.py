@@ -4,7 +4,7 @@ import requests
 from requests.exceptions import HTTPError
 import jsonpickle as jp
 
-from core.scan import Scan
+from dao_models.scan import Scan
 from core.endpoints import Endpoint
 
 class DataPusher:

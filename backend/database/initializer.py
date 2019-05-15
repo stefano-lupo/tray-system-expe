@@ -10,6 +10,7 @@ DB_NAME = "tray_system"
 
 UNSIGNED_INT = "integer unsigned not null"
 ID = "id " + UNSIGNED_INT + " auto_increment primary key"
+PRIMARY_KEY = "primary key ({})"
 FOREIGN_KEY = "foreign key ({}) references {}(id)"
 
 queries = [
@@ -37,7 +38,8 @@ queries = [
     "create table detected_ingredients (" +
         "scan_id {},".format(UNSIGNED_INT) +
         "ingredient_id {},".format(UNSIGNED_INT) +
-        "detection json," +
+        "detections json," +
+        PRIMARY_KEY.format(",".join(["scan_id", "ingredient_id"])) + "," +
         FOREIGN_KEY.format("scan_id", "scans") + "," +
         FOREIGN_KEY.format("ingredient_id", "ingredients") + ");",
 ]

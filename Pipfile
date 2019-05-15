@@ -11,6 +11,7 @@ numpy = "*"
 flask = "*"
 requests = "*"
 jsonpickle = "*"
+opencv-python = "*"
 
 [requires]
 python_version = "3.6"

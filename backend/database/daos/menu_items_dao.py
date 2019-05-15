@@ -1,11 +1,11 @@
-from typing import List, Set, Tuple
+from typing import Set
 from collections import defaultdict
 
 from base_dao import BaseDao
 from ingredients_dao import IngredientsDao
 from menu_item_ingredient_dao import MenuItemIngredientDao
-from core.menu_item import *
-from core.ingredient import *
+from dao_models.menu_item import *
+from dao_models.ingredient import *
 
 TABLE = "menu_items"
 ID = "id"
@@ -76,8 +76,8 @@ if __name__ == "__main__":
 
     mid = MenuItemsDao()
 
-    # menu_item1 = MenuItem("Chicken Pasta", [Ingredient(i) for i in ["Chicken", "Pasta"]])
-    # menu_item2 = MenuItem("Tofu Pasta", [Ingredient(i) for i in ["Tofu", "Pasta"]])
-    # mid.insert_menu_items([menu_item1, menu_item2])
+    menu_item1 = MenuItem("Chicken Pasta", [Ingredient(i) for i in ["Chicken", "Pasta"]])
+    menu_item2 = MenuItem("Tofu Pasta", [Ingredient(i) for i in ["Tofu", "Pasta"]])
+    mid.insert_menu_items([menu_item1, menu_item2])
 
     menu_items: List[MenuItem] = mid.get_menu_items(names=["Chicken Pasta", "Pasta"])

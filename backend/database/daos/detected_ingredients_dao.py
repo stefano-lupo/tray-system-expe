@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from base_dao import BaseDao
 from dao_models.detection import Detection
@@ -21,6 +21,16 @@ class DetectedIngredientsDao(BaseDao):
         else:
             rows = self.get()
         return [DetectedIngredient(**r) for r in rows]
+
+    def get_waste_by_menu_item(self):
+        sql = 'select detected_ingredients.detections, ingredients.name, menu_items.name ' \
+              'from detected_ingredients ' \
+              'inner join ingredients on ingredients.id = detected_ingredients.ingredient_id ' \
+              'inner join scans on scans.id = detected_ingredients.scan_id ' \
+              'inner join menu_items on menu_items.id = scans.menu_item_id'
+        print(sql)
+        return self.fetch_sql(sql)
+
 
     def insert_detected_ingredients(self, detected_ingredients: List[DetectedIngredient]) -> int:
         return self.insert([d.get_for_db() for d in detected_ingredients])

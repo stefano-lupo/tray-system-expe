@@ -7,6 +7,4 @@ db = mysql.connect(
     database="tray_system"
 )
 
-print(db)
-
 cursor = db.cursor(dictionary=True)

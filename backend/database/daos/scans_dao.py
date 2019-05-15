@@ -29,6 +29,6 @@ class ScansDao(BaseDao):
 
 if __name__ == "__main__":
     sd = ScansDao()
-    scan = Scan(1, 1, 1)
-    sd.insert_scans([scan])
-    sd.get_scans()
+    # scan = Scan(1, 1, 1)
+    # sd.insert_scans([scan])
+    # sd.get_scans()

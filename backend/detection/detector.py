@@ -12,6 +12,7 @@ from segmented_circle import SegmentedCircle, Segment
 from core.scan_request import ScanRequest
 from core.dao_models.ingredient import Ingredient
 from core.dao_models.detection import Detection
+from core.dao_models.detected_ingredient import DetectedIngredient
 
 
 def calculate_mass(depth_map: np.ndarray, segment: Segment) -> float:
@@ -23,14 +24,13 @@ class Detector:
         self.circle_detector = CircleDetector()
         self.ingredient_detector = IngredientDetector()
 
-    def handle_scan(self, scan_request: ScanRequest):
+    def handle_scan(self, scan_request: ScanRequest, scan_id: int) -> List[DetectedIngredient]:
         image = np.array(scan_request.image)
 
-
-        depth_map = np.array(scan_req.depth_map)
+        depth_map = np.array(scan_request.depth_map)
         segmented_circles: List[SegmentedCircle] = self.circle_detector.get_segmented_circles(image)
 
-        detecteted_ingredients: Dict[Ingredient, List[Detection]] = defaultdict(list)
+        detected_ingredients: Dict[Ingredient, List[Detection]] = defaultdict(list)
         for segmented_circle in segmented_circles:
             segmented_circle.draw(image)
             for segment in segmented_circle.segments:
@@ -38,10 +38,9 @@ class Detector:
                 if ingredient is None:
                     continue
                 detection: Detection = Detection(segment.x1, segment.y1, calculate_mass(depth_map, segment))
-                detecteted_ingredients[ingredient].append(detection)
-        cv.imshow("image", image)
-        cv.waitKey(0)
-        print(detecteted_ingredients)
+                detected_ingredients[ingredient].append(detection)
+
+        return [DetectedIngredient(scan_id, k.id, v) for (k, v) in detected_ingredients.items()]
 
 
 if __name__ == "__main__":
@@ -49,4 +48,8 @@ if __name__ == "__main__":
     depth_map = np.random.rand(img.shape[0], img.shape[1])
     detector = Detector()
     scan_req = ScanRequest(img, depth_map, 1, 1)
-    detector.handle_scan(scan_req)
+
+    from tray_system.data_pusher import DataPusher
+    dp = DataPusher()
+    dp.push_scan(scan_req)
+    # detector.handle_scan(scan_req)

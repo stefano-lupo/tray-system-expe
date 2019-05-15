@@ -11,6 +11,6 @@ class DetectedIngredient:
         self.detections = detections
 
     def get_for_db(self):
-        as_dict = vars(self)
+        as_dict = dict(vars(self))
         as_dict["detections"] = jp.encode(self.detections, unpicklable=False)
         return as_dict

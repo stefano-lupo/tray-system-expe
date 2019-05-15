@@ -29,6 +29,10 @@ class BaseDao:
         db.commit()
         return cursor.lastrowid
 
+    def fetch_sql(self, sql: str) -> List[Dict]:
+        cursor.execute(sql)
+        return cursor.fetchall()
+
     def get(self, clause: str="", cols=None) -> List[Dict]:
         cols = self.columns if cols is None else cols
         cols = self.comma_seperate(cols)

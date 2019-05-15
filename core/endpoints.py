@@ -7,7 +7,8 @@ BASE_URL = "http://localhost:{}".format(API_PORT)
 
 class Endpoint(Enum):
     SCAN = "/scan",
-    SOMETHING_ELSE = "/else"
+    WASTE_BY_MENU_ITEM = "/waste/menu_item",
+    WASTE_FOR_MENU_ITEM = "/waste/menu_item/<id>"
 
     def get(self) -> str:
         return BASE_URL + self.value[0]

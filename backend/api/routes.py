@@ -3,6 +3,7 @@ from uuid import uuid4
 from typing import List, Dict
 from flask import request
 import jsonpickle as jp
+import json
 
 from core.config import UPLOAD_DIR
 from api import app
@@ -41,9 +42,8 @@ def scan_route():
 
     return "Scan successful"
 
-print(Endpoint.WASTE_BY_MENU_ITEM.get_without_prefix())
 
 @app.route(Endpoint.WASTE_BY_MENU_ITEM.get_without_prefix(), methods=["GET"])
 def waste_by_menu_item_route() -> str:
     res: Dict = detected_ingredients_dao.get_waste_by_menu_item()
-    return jp.encode(res)
+    return json.dumps(res)

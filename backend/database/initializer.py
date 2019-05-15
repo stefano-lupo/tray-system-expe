@@ -41,15 +41,16 @@ queries = [
         "detections json," +
         PRIMARY_KEY.format(",".join(["scan_id", "ingredient_id"])) + "," +
         FOREIGN_KEY.format("scan_id", "scans") + "," +
-        FOREIGN_KEY.format("ingredient_id", "ingredients") + ");",
+        FOREIGN_KEY.format("ingredient_id", "ingredients") + ");"
 ]
 
-cursor = db.cursor()
 
-for q in queries:
-    try:
-        print(q)
-        cursor.execute(q)
-    except mysql.Error as e:
-        print(e)
-3
+if __name__ == "__main__":
+    cursor = db.cursor()
+
+    for q in queries:
+        try:
+            print(q)
+            cursor.execute(q)
+        except mysql.Error as e:
+            print(e)

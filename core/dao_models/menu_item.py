@@ -2,8 +2,8 @@ from typing import List, Dict
 
 from dao_models.ingredient import *
 
-MENU_ITEM_ID_ALIAS = "m_id"
-MENU_ITEM_NAME_ALIAS = "m_name"
+MENU_ITEM_ID_ALIAS = "menu_item_id"
+MENU_ITEM_NAME_ALIAS = "menu_item_name"
 
 class MenuItem:
 

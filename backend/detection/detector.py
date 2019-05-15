@@ -15,8 +15,8 @@ from core.dao_models.detection import Detection
 from core.dao_models.detected_ingredient import DetectedIngredient
 
 
-def calculate_mass(depth_map: np.ndarray, segment: Segment) -> float:
-    return np.average(segment.get_segment_of(depth_map)) * DEPTH_UNIT_SCALE_FACTOR * segment.get_area()
+def calculate_mass(depth_map: np.ndarray, segment: Segment) -> int:
+    return int(np.average(segment.get_segment_of(depth_map)) * DEPTH_UNIT_SCALE_FACTOR * segment.get_area())
 
 
 class Detector:

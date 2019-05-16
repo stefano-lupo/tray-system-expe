@@ -2,19 +2,18 @@ import os
 from uuid import uuid4
 from typing import List, Dict
 from flask import request
-import jsonpickle as jp
 import json
 
 from core.config import UPLOAD_DIR
-from api import app
+from . import app
 from core.dao_models.detected_ingredient import DetectedIngredient
 from core.dao_models.scan import Scan
 from core.endpoints import Endpoint
 from core.scan_request import ScanRequest
-from database.daos.detected_ingredients_dao import DetectedIngredientsDao
-from database.daos.images_dao import ImagesDao
-from database.daos.scans_dao import ScansDao
-from detection.detector import Detector
+from backend.database.daos.detected_ingredients_dao import DetectedIngredientsDao
+from backend.database.daos.images_dao import ImagesDao
+from backend.database.daos.scans_dao import ScansDao
+from backend.detection.detector import Detector
 
 
 images_dao: ImagesDao = ImagesDao()

@@ -1,6 +1,7 @@
 from typing import List, Tuple, Dict
 
-from manager import cursor, db
+from backend.database.manager import cursor, db
+
 
 class BaseDao:
     def __init__(self, table_name: str, columns: List[str]):

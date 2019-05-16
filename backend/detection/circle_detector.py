@@ -10,8 +10,8 @@ from core.config import \
     CIRCLE_DETECT_MIN_RADIUS, \
     IMAGE_SEGMENT_SIZE_PX
 
-from circle import Circle
-from segmented_circle import SegmentedCircle, Segment
+from .circle import Circle
+from .segmented_circle import SegmentedCircle, Segment
 
 
 def intersect(cx, cy, cr, rx, ry, rw, rh):

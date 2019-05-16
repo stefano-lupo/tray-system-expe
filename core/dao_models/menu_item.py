@@ -1,9 +1,10 @@
 from typing import List, Dict
 
-from dao_models.ingredient import *
+from .ingredient import Ingredient, INGREDIENT_ID_ALIAS, INGREDIENT_NAME_ALIAS
 
 MENU_ITEM_ID_ALIAS = "menu_item_id"
 MENU_ITEM_NAME_ALIAS = "menu_item_name"
+
 
 class MenuItem:
 

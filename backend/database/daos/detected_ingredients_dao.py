@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import jsonpickle as jp
 
-from base_dao import BaseDao
+from .base_dao import BaseDao
 from core.dao_models.detection import Detection
 from core.dao_models.detected_ingredient import DetectedIngredient
 from core.dao_models.ingredient import Ingredient, INGREDIENT_ID_ALIAS, INGREDIENT_NAME_ALIAS

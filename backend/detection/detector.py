@@ -4,10 +4,10 @@ import numpy as np
 from collections import defaultdict
 from typing import List, Dict
 
-from config import DEPTH_UNIT_SCALE_FACTOR
-from circle_detector import CircleDetector
-from ingredient_detector import IngredientDetector
-from segmented_circle import SegmentedCircle, Segment
+from core.config import DEPTH_UNIT_SCALE_FACTOR
+from .circle_detector import CircleDetector
+from .ingredient_detector import IngredientDetector
+from .segmented_circle import SegmentedCircle, Segment
 
 from core.scan_request import ScanRequest
 from core.dao_models.ingredient import Ingredient

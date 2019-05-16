@@ -3,7 +3,7 @@ import numpy as np
 
 from typing import Tuple, List, Dict
 
-from circle import Circle
+from .circle import Circle
 
 
 class Segment:

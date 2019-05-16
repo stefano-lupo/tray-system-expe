@@ -1,7 +1,7 @@
 from typing import List
 
-from base_dao import BaseDao
-from dao_models.image import Image
+from .base_dao import BaseDao
+from core.dao_models.image import Image
 
 TABLE = "images"
 ID = "id"

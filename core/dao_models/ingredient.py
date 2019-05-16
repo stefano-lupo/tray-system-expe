@@ -1,6 +1,6 @@
-
 INGREDIENT_ID_ALIAS = "ingredient_id"
 INGREDIENT_NAME_ALIAS = "ingredient_name"
+
 
 class Ingredient:
 

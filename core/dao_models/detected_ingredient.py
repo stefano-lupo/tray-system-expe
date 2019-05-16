@@ -1,7 +1,7 @@
 from typing import List
 import jsonpickle as jp
 
-from dao_models.detection import Detection
+from .detection import Detection
 
 
 class DetectedIngredient:

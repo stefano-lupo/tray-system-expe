@@ -2,7 +2,7 @@ import random
 import numpy as np
 from typing import List, Tuple, Dict
 
-from database.daos.ingredients_dao import  IngredientsDao
+from backend.database.daos.ingredients_dao import IngredientsDao
 from core.dao_models.ingredient import Ingredient
 
 random.seed(0)

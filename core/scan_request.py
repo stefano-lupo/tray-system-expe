@@ -38,6 +38,5 @@ class ScanRequest:
     def get_json(self) -> str:
         return jp.encode(self.remove_matrices(), unpicklable=False)
 
-
     def get_for_insertion(self):
         return self.remove_matrices()

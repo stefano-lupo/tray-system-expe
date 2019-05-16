@@ -1,6 +1,7 @@
 import jsonpickle as jp
 from core.config import IMAGE_SEGMENT_SIZE_PX as WIDTH, IMAGE_SEGMENT_SIZE_PX as HEIGHT
 
+
 class Detection:
     def __init__(self,
                  x: int,

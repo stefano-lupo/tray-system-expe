@@ -1,7 +1,7 @@
 from typing import List
 
-from base_dao import BaseDao
-from dao_models.ingredient import Ingredient
+from .base_dao import BaseDao
+from core.dao_models.ingredient import Ingredient
 
 TABLE = "ingredients"
 ID = "id"

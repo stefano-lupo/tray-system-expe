@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from base_dao import BaseDao
+from .base_dao import BaseDao
 
 TABLE = "menu_item_ingredient"
 MENU_ITEM_ID = "menu_item_id"

@@ -2,6 +2,7 @@ from typing import List, Dict
 from datetime import datetime
 from core.scan_request import ScanRequest
 
+
 class Scan:
 
     def __init__(self,
@@ -26,3 +27,4 @@ class Scan:
             as_dict.pop("user_id")
 
         return as_dict
+

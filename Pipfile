@@ -12,6 +12,7 @@ flask = "*"
 requests = "*"
 jsonpickle = "*"
 opencv-python = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.6"

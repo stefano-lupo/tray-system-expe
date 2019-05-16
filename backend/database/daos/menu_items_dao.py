@@ -1,11 +1,11 @@
 from typing import Set
 from collections import defaultdict
 
-from base_dao import BaseDao
-from ingredients_dao import IngredientsDao
-from menu_item_ingredient_dao import MenuItemIngredientDao
-from dao_models.menu_item import *
-from dao_models.ingredient import *
+from .base_dao import BaseDao
+from .ingredients_dao import IngredientsDao
+from .menu_item_ingredient_dao import MenuItemIngredientDao
+from core.dao_models.menu_item import *
+from core.dao_models.ingredient import *
 
 TABLE = "menu_items"
 ID = "id"
@@ -68,16 +68,3 @@ class MenuItemsDao(BaseDao):
             ingredient_ids = [ingredient_ids_by_name[ingredient.name] for ingredient in menu_item.ingredients]
             self.menu_item_ingredient_dao.link_menu_item_to_ingredients(menu_item.id, ingredient_ids)
         return menu_items
-
-
-if __name__ == "__main__":
-    id = IngredientsDao()
-    print(id.get_ingredients())
-
-    mid = MenuItemsDao()
-
-    menu_item1 = MenuItem("Chicken Pasta", [Ingredient(i) for i in ["Chicken", "Pasta"]])
-    menu_item2 = MenuItem("Tofu Pasta", [Ingredient(i) for i in ["Tofu", "Pasta"]])
-    mid.insert_menu_items([menu_item1, menu_item2])
-
-    menu_items: List[MenuItem] = mid.get_menu_items(names=["Chicken Pasta", "Pasta"])

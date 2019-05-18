@@ -2,6 +2,8 @@ from typing import List, Dict
 from datetime import datetime
 from core.scan_request import ScanRequest
 
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
 
 class Scan:
 
@@ -14,7 +16,7 @@ class Scan:
         self.id = id
         self.image_id = image_id
         self.menu_item_id = menu_item_id
-        self.time = time
+        self.time = datetime.strptime(time, DATETIME_FORMAT) if isinstance(time, str) else time
         self.user_id = user_id
 
     @classmethod

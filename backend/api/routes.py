@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 from typing import List, Dict
-from flask import request
+from flask import request, jsonify
 import json
 
 from core.config import UPLOAD_DIR
@@ -45,4 +45,14 @@ def scan_route():
 @app.route(Endpoint.WASTE_BY_MENU_ITEM.get_without_prefix(), methods=["GET"])
 def waste_by_menu_item_route() -> str:
     res: Dict = detected_ingredients_dao.get_waste_by_menu_item()
-    return json.dumps(res)
+    return jsonify(res)
+
+
+@app.route(Endpoint.WASTE_BY_INGREDIENT.get_without_prefix(), methods=["GET"])
+def waste_by_ingredient() -> str:
+    res: Dict = detected_ingredients_dao.get_waste_by_ingredient()
+    return jsonify(res)
+
+@app.route(Endpoint.WASTE_PER_HOUR.get_without_prefix(), methods=["GET"])
+def waste_per_hour() -> str:
+    return jsonify(detected_ingredients_dao.get_waste_per_hour())

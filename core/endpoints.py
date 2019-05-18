@@ -8,6 +8,8 @@ BASE_URL = "http://localhost:{}".format(API_PORT)
 class Endpoint(Enum):
     SCAN = "/scan",
     WASTE_BY_MENU_ITEM = "/waste/menu_item",
+    WASTE_BY_INGREDIENT = "/waste/ingredient",
+    WASTE_PER_HOUR = "/waste/per_hour",
     WASTE_FOR_MENU_ITEM = "/waste/menu_item/<id>"
 
     def get(self) -> str:

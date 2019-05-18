@@ -1,5 +1,5 @@
 API_PORT = 8080
-UPLOAD_DIR="../../images/"
+UPLOAD_DIR="images/"
 
 IMAGE_SEGMENT_SIZE_PX = 10
 

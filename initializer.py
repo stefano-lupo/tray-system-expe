@@ -76,7 +76,7 @@ def create_menu_items():
 
 
 def create_scan():
-    img: np.ndarray = cv.imread("../../test.jpg")
+    img: np.ndarray = cv.imread("test.jpg")
     depth_map = np.random.rand(img.shape[0], img.shape[1])
     detector = Detector()
     scan_req = ScanRequest(img, depth_map, 2, 1)

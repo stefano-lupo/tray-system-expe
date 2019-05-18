@@ -1,4 +1,6 @@
-from typing import List
+from typing import List, Dict
+from collections import defaultdict
+
 import jsonpickle as jp
 
 from .detection import Detection
@@ -9,6 +11,10 @@ class DetectedIngredient:
         self.scan_id = scan_id
         self.ingredient_id = ingredient_id
         self.detections = detections
+
+    def get_total_waste(self) -> int:
+        return sum([d.mass for d in self.detections])
+
 
     def get_for_db(self):
         as_dict = dict(vars(self))

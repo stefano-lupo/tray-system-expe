@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c335399361bc53f64084cde81fc8de7c1e16b30d516d9412876678ff197833ac"
+            "sha256": "76fc313cfd8e4413bef95d1bb6ce1f8a7dfd70f615bc5f2d332b0e87579948ed"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -183,6 +183,19 @@
             ],
             "index": "pypi",
             "version": "==4.1.0.25"
+        },
+        "pyrealsense2": {
+            "hashes": [
+                "sha256:27ef6b88cad52b610bf104549044ad47aa401d1eb10de3959ebe7d5e3643340a",
+                "sha256:6aef051d58f5989b0c712430bcc94f70a6a86464ee4165ef3d1b03968a9a828f",
+                "sha256:6db20ee77e6d6497c3a1d8ef548e2e6714d4a7be0f1b30075ddc27e735684e99",
+                "sha256:767712f25f93782ba103ae4c29c3b13aa27f43d401522883e5c60ee3617f01e9",
+                "sha256:8af496c9dd8eb1336b03abff1e12a3fd2fed626ce450fa5a40074f9e5aec0c5d",
+                "sha256:95f2d08b44ad23687578af262fb8a7e37a5473c4d172064b2e1ef45e9743c8a7",
+                "sha256:bd72cbe37efb5c482258906c0b3fd3fc7d70fe11c22b025b8519b2e87108337c"
+            ],
+            "index": "pypi",
+            "version": "==2.21.0.786"
         },
         "requests": {
             "hashes": [

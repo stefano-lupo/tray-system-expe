@@ -5,7 +5,7 @@ from typing import Tuple, List, Dict
 
 from .circle import Circle
 
-
+import cv2 as cv
 class Segment:
 
     def __init__(self, x1: int, y1: int, x2: int, y2: int):
@@ -20,6 +20,13 @@ class Segment:
     def get_area(self):
         return (self.x2 - self.x1) * (self.y2 - self.y1)
 
+    def get_segment_of_image(self, image: np.ndarray) -> np.ndarray:
+        pixels = image[self.y1-1:self.y2-1, self.x1-1: self.x2-1, :]
+        # print(pixels.shape)
+        # cv.imshow("tmp", pixels)
+        # cv.waitKey(1)
+        return pixels
+
     def draw_segment(self, image):
         cv.rectangle(image, (self.x1, self.y1), (self.x2, self.y2), (125, 100, 0), 0)
 
@@ -32,6 +39,9 @@ class SegmentedCircle:
 
     def add_segment(self, segment:Segment):
         self.segments.append(segment)
+
+    def get_segments_of_image(self, image):
+        return [s.get_segment_of_image(image) for s in self.segments]
 
     def draw(self, image: np.ndarray):
         cv.circle(image, (self.circle.x, self.circle.y), self.circle.r, (0, 255, 0), 2)

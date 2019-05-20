@@ -10,7 +10,7 @@ from core.config import IMAGE_SEGMENT_SIZE_PX
 
 WIDTH = 640
 HEIGHT = 480
-INGREDIENT = "pasta"
+INGREDIENT = "tomato"
 TRAINING_IMAGE_DIR = "./training_images"
 ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, INGREDIENT)
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
         next_id = 0 if len(dirs) == 0 else max(dirs) + 1
 
     # generate_samples()
-    train_test_split()
+    # train_test_split()
 
-    # print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
-    # get_images(next_id)
+    print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
+    get_images(next_id)

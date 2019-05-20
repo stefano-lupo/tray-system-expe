@@ -2,6 +2,7 @@ import os
 import pyrealsense2 as rs
 import numpy as np
 import cv2 as cv
+import shutil
 
 from backend.detection.circle_detector import CircleDetector
 from backend.detection.segmented_circle import Segment, SegmentedCircle
@@ -12,6 +13,8 @@ HEIGHT = 480
 INGREDIENT = "pasta"
 TRAINING_IMAGE_DIR = "./training_images"
 ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, INGREDIENT)
+
+EVAL_SPLIT_SIZE = 0.2
 
 OUTPUT_DIR = "split_training_images_{}".format(IMAGE_SEGMENT_SIZE_PX)
 
@@ -26,11 +29,10 @@ def sample_image(rgbImage: np.ndarray, segmented_circle: SegmentedCircle, target
 
 
 
-def split_images():
+def generate_samples():
     circle_detector: CircleDetector = CircleDetector()
     for ingredient_dir in os.listdir(TRAINING_IMAGE_DIR):
         full_ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, ingredient_dir)
-        # print(full_ingredient_dir)
         skip = 0
         for image_dir in os.listdir(full_ingredient_dir):
             full_image_dir = os.path.join(full_ingredient_dir, image_dir)
@@ -43,6 +45,36 @@ def split_images():
             segmented_circles = circle_detector.get_segmented_circles(img)
             [sample_image(img, sc, target_dir, skip) for sc in segmented_circles]
             skip = skip + len(segmented_circles[0].segments)
+
+def train_test_split():
+    train_dir = os.path.join(OUTPUT_DIR, "train")
+    test_dir = os.path.join(OUTPUT_DIR, "test")
+    if os.path.exists(train_dir):
+        shutil.rmtree(train_dir)
+    if os.path.exists(test_dir):
+        shutil.rmtree(test_dir)
+    ingredient_dirs = os.listdir(OUTPUT_DIR)
+    os.mkdir(train_dir)
+    os.mkdir(test_dir)
+    for ingredient_dir in ingredient_dirs:
+        os.mkdir(os.path.join(train_dir, ingredient_dir))
+        os.mkdir(os.path.join(test_dir, ingredient_dir))
+        images = os.listdir(os.path.join(OUTPUT_DIR, ingredient_dir))
+        np.random.shuffle(images)
+        test_index = int(len(images) * EVAL_SPLIT_SIZE)
+        test = images[:test_index]
+        train = images[test_index:]
+        for t in test:
+            name = os.path.join(OUTPUT_DIR, ingredient_dir, t)
+            target = os.path.join(test_dir, ingredient_dir, t)
+            print(name)
+            print(target)
+            os.rename(name, target)
+        for t in train:
+            name = os.path.join(OUTPUT_DIR, ingredient_dir, t)
+            os.rename(name, os.path.join(train_dir, ingredient_dir, t))
+
+
 
 
 def get_images(next_id: int = 0):
@@ -110,6 +142,8 @@ if __name__ == "__main__":
         dirs = [int(d) for d in dirs]
         next_id = 0 if len(dirs) == 0 else max(dirs) + 1
 
-    split_images()
+    # generate_samples()
+    train_test_split()
+
     # print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
     # get_images(next_id)

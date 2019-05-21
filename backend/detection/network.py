@@ -23,4 +23,5 @@ class Network:
     def predict(self, img: np.ndarray):
         vals = self.model.predict(img)
         print(vals)
+        return vals
 

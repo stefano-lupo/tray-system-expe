@@ -96,6 +96,6 @@ def create_scan():
 
 if __name__ == "__main__":
     # create_db_and_tables()
-    # create_menu_items()
-    create_scan()
+    create_menu_items()
+    # create_scan()
 

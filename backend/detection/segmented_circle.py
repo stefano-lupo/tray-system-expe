@@ -27,8 +27,12 @@ class Segment:
         # cv.waitKey(1)
         return pixels
 
-    def draw_segment(self, image):
-        cv.rectangle(image, (self.x1, self.y1), (self.x2, self.y2), (125, 100, 0), 0)
+    def draw_segment(self, image, colour=(125, 100, 0), thickness=0, pad=0):
+        # print(colour)
+        try:
+            cv.rectangle(image, (self.x1 + pad, self.y1 + pad), (self.x2 - pad, self.y2 - pad), colour, thickness)
+        except TypeError:
+            print("error")
 
 
 class SegmentedCircle:

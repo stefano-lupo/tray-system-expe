@@ -1,13 +1,23 @@
 from typing import List, Dict, Tuple
 
+import mysql.connector as mysql
 import numpy as np
 import cv2 as cv
 
-from backend.database.manager import mysql, db
-from backend.detection.detector import Detector
+# from backend.database.manager import mysql, db
 from core.scan_request import ScanRequest
+from core.config import DB_CONFIG
 
-DB_NAME = "tray_system"
+try:
+    db = mysql.connect(**DB_CONFIG)
+    cursor = db.cursor(dictionary=True)
+except mysql.ProgrammingError as e:
+    print("Had connection error, trying again without specifying DB")
+    without_db = dict(DB_CONFIG)
+    without_db.pop("database")
+    db = mysql.connect(**without_db)
+    cursor = db.cursor(dictionary=True)
+
 
 UNSIGNED_INT = "integer unsigned not null"
 ID = "id " + UNSIGNED_INT + " auto_increment primary key"
@@ -15,8 +25,8 @@ PRIMARY_KEY = "primary key ({})"
 FOREIGN_KEY = "foreign key ({}) references {}(id)"
 
 QUERIES = [
-    "create database {};".format(DB_NAME),
-    "use {};".format(DB_NAME),
+    "create database {};".format(DB_CONFIG["database"]),
+    "use {};".format(DB_CONFIG["database"]),
     "create table images ({}, path varchar(100) not null);".format(ID),
 
     "create table ingredients ({}, name varchar(100) not null);".format(ID),
@@ -47,7 +57,6 @@ QUERIES = [
 
 
 def create_db_and_tables():
-    cursor = db.cursor()
     for q in QUERIES:
         try:
             print(q)
@@ -68,17 +77,15 @@ def create_menu_items():
 
     mid = MenuItemsDao()
 
-    menu_item1 = MenuItem("Chicken Pasta", [Ingredient(i) for i in ["Chicken", "Pasta"]])
-    menu_item2 = MenuItem("Tofu Pasta", [Ingredient(i) for i in ["Tofu", "Pasta"]])
-    mid.insert_menu_items([menu_item1, menu_item2])
-
-    menu_items: List[MenuItem] = mid.get_menu_items(names=["Chicken Pasta", "Pasta"])
+    menu_item1 = MenuItem("Chicken Pasta", [Ingredient(i) for i in ["Chicken", "Pasta", "Green Beans"]])
+    menu_item2 = MenuItem("Chicken Rice", [Ingredient(i) for i in ["Chicken", "Rice", "Broccoli"]])
+    menu_item3 = MenuItem("Salad", [Ingredient(i) for i in ["Lettuce", "Chicken", "Tomato"]])
+    mid.insert_menu_items([menu_item1, menu_item2, menu_item3])
 
 
 def create_scan():
-    img: np.ndarray = cv.imread("test.jpg")
+    img: np.ndarray = cv.imread("raw.jpg")
     depth_map = np.random.rand(img.shape[0], img.shape[1])
-    detector = Detector()
     scan_req = ScanRequest(img, depth_map, 2, 1)
 
     from tray_system.data_pusher import DataPusher

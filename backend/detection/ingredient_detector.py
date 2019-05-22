@@ -1,33 +1,36 @@
 import random
 import numpy as np
-from typing import List, Tuple, Dict
+import cv2 as cv
+from typing import List
 
-
-from keras import layers, models, optimizers, applications
-from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
-from keras.preprocessing.image import ImageDataGenerator
-
-from .network import Network
+from backend.detection.network import Network
 from ..database.daos.ingredients_dao import IngredientsDao
 from core.dao_models.ingredient import Ingredient
+from core.config import IMAGE_SEGMENT_SIZE_PX
 
 random.seed(0)
-expected_shape = (1,32,32,3)
+EXPECTED_SHAPE = (1, IMAGE_SEGMENT_SIZE_PX, IMAGE_SEGMENT_SIZE_PX, 3)
+
 
 class IngredientDetector:
     def __init__(self):
-        # TODO: This might end up moved into network
         self.ingredients: List[Ingredient] = IngredientsDao().get_ingredients()
-        self.network = Network(num_classes=len(self.ingredients))
+        self.network = Network("small")
 
     def label(self, sub_image: np.ndarray) -> np.ndarray:
-        expanded = np.expand_dims(sub_image, axis=0)
-        shape = expanded.shape
-        # if shape[0] is not 32 or shape[1] is not 32:
-        #     print("Skipping")
-        #     return None
-        if shape != (1, 32, 32, 3):
-            print("skipping")
+        copy = np.copy(sub_image)
+
+        if not len(copy):
+            print("Skipping as copy was empty")
             return None
-        return self.network.predict(expanded)
+
+        copy = cv.cvtColor(copy, cv.COLOR_BGR2RGB)
+        copy = np.expand_dims(copy, axis=0)
+        copy = np.true_divide(copy, 255)
+
+        if copy.shape != EXPECTED_SHAPE:
+            print("Skipping as shape was ")
+            print(copy.shape)
+            return None
+        return self.network.predict(copy)
 

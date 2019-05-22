@@ -1,5 +1,6 @@
 API_PORT = 8080
 UPLOAD_DIR="images/"
+ASSETS_DIR="assets/"
 
 DB_CONFIG = {
     "host": "localhost",
@@ -10,7 +11,8 @@ DB_CONFIG = {
 
 IMAGE_SEGMENT_SIZE_PX = 32
 NUM_CLASSES = 7
-WEIGHTS_FILE = "small_cnn.h5"
+SMALL_MODEL = "models/small_cnn.h5"
+RES_NET_MODEL = "models/res_net_32.h5"
 
 CIRCLE_DETECT_MIN_RADIUS = 100
 CIRCLE_DETECT_MIN_DISTANCE_BETWEEN_CENTERS = 100

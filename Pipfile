@@ -13,10 +13,11 @@ requests = "*"
 jsonpickle = "*"
 opencv-python = "*"
 flask-cors = "*"
-#pyrealsense2 = "*"
+pyrealsense2 = "*"
 keras = "*"
 tensorflow = "*"
 pillow = "*"
+pyserial = "*"
 
 [requires]
 python_version = "3.6"

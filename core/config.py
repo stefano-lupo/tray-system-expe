@@ -1,5 +1,5 @@
 API_PORT = 8080
-UPLOAD_DIR="images/"
+UPLOAD_DIR="backend/api/static/images/"
 ASSETS_DIR="assets/"
 
 DB_CONFIG = {

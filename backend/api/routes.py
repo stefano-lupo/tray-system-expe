@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 from typing import List, Dict
-from flask import request, jsonify
+from flask import request, jsonify, send_from_directory
 import json
 
 from core.config import UPLOAD_DIR
@@ -56,3 +56,11 @@ def waste_by_ingredient() -> str:
 @app.route(Endpoint.WASTE_PER_HOUR.get_without_prefix(), methods=["GET"])
 def waste_per_hour() -> str:
     return jsonify(detected_ingredients_dao.get_waste_per_hour())
+
+@app.route(Endpoint.RECENT_IMAGES.get_without_prefix(), methods=["GET"])
+def get_recent_images():
+    return jsonify(images_dao.get_images())
+
+@app.route(Endpoint.IMAGE.get_without_prefix(), methods=["GET"])
+def serve_image(path):
+    return send_from_directory(UPLOAD_DIR, path)

@@ -114,7 +114,7 @@ def test_image(ingredient_detector: IngredientDetector):
 
 if __name__ == "__main__":
     ingredient_detector: IngredientDetector = IngredientDetector()
-    # run_live(ingredient_detector)
-    test_image(ingredient_detector)
+    run_live(ingredient_detector)
+    # test_image(ingredient_detector)
 
 

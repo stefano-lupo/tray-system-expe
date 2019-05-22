@@ -10,7 +10,9 @@ class Endpoint(Enum):
     WASTE_BY_MENU_ITEM = "/waste/menu_item",
     WASTE_BY_INGREDIENT = "/waste/ingredient",
     WASTE_PER_HOUR = "/waste/per_hour",
-    WASTE_FOR_MENU_ITEM = "/waste/menu_item/<id>"
+    WASTE_FOR_MENU_ITEM = "/waste/menu_item/<id>",
+    RECENT_IMAGES = "/images/recent",
+    IMAGE = "/image/<path>"
 
     def get(self) -> str:
         return BASE_URL + self.value[0]

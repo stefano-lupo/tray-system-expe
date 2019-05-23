@@ -23,6 +23,13 @@ class ImagesDao(BaseDao):
     def insert_images(self, image_paths: List[str]) -> int:
         return self.insert([{PATH: i} for i in image_paths])
 
+    def get_ingredients_in_image(self, image_id):
+        sql = 'select detected_ingredients.ingredient_id, detected_ingredients.detections, images.id f' \
+              'rom detected_ingredients ' \
+              'inner join scans on detected_ingredients.scan_id = scans.id ' \
+              'inner join images on scans.image_id = images.id where images.id = {}'.format(image_id)
+        return self.fetch_sql(sql)
+
 
 if __name__ == "__main__":
     id = ImagesDao()

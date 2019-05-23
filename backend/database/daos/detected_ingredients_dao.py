@@ -37,7 +37,7 @@ class DetectedIngredientsDao(BaseDao):
 
     def get_detected_ingredients(self, ids: List[int] = None) -> List[DetectedIngredient]:
         if ids is not None:
-            rows = self.get(clause="ids in {}".format(self.list_to_in_param(ids)))
+            rows = self.get(clause="id in {}".format(self.list_to_in_param(ids)))
         else:
             rows = self.get()
         return [DetectedIngredient(**r) for r in rows]

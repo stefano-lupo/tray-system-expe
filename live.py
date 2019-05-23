@@ -45,15 +45,15 @@ def process_colour_image(color_image, ingredient_detector):
             #     if cv.waitKey(1) & 0xFF == ord('q'):
             #         break
 
-            predictions = ingredient_detector.label(segment.get_segment_of_image(color_image))
+            ingredient = ingredient_detector.label(segment.get_segment_of_image(color_image))
             # print(format_predictions(predictions))
-            if predictions is None:
+            if ingredient is None:
                 # print("Had none")
-                all_predictions.append(predictions)
+                all_predictions.append(ingredient)
                 skips = skips + 1
                 continue
-            index = np.argmax(predictions[0])
-            hue = max(0, min((index + 1) * (MAX_HUE / 7), 255))
+
+            hue = max(0, min((ingredient.id + 1) * (MAX_HUE / 7), 255))
             # print("Red: %s" % red)
             non_skips = non_skips + 1
 

@@ -14,6 +14,7 @@ class BaseDao:
         return ",".join(lst)
 
     def list_to_in_param(self, lst: List) -> str:
+        print(lst)
         return "({})".format(",".join(lst))
 
     def insert(self, rows: List[Dict]) -> int:

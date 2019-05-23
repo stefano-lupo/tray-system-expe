@@ -7,10 +7,13 @@ from core.config import IMAGE_SEGMENT_SIZE_PX, NUM_CLASSES, SMALL_MODEL, RES_NET
 
 class Network:
 
-    def __init__(self, network="resnet"):
+    def __init__(self, network="small"):
 
         model_file = RES_NET_MODEL if network == "resnet" else SMALL_MODEL
+
+        # Apparently this fixes the weird bug
         self.model = models.load_model(model_file)
+        self.model._make_predict_function()
 
 
         # model = models.Sequential()

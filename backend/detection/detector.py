@@ -40,7 +40,9 @@ class Detector:
                 detection: Detection = Detection(segment.x1, segment.y1, calculate_mass(depth_map, segment))
                 detected_ingredients[ingredient].append(detection)
 
-        return [DetectedIngredient(scan_id, k.id, v) for (k, v) in detected_ingredients.items()]
+        results =  [DetectedIngredient(scan_id, k.id, v) for (k, v) in detected_ingredients.items()]
+        print("Found {} detected ingredients: {}".format(len(results), [r.ingredient_id for r in results]))
+        return results
 
 
 if __name__ == "__main__":

@@ -15,9 +15,9 @@ EXPECTED_SHAPE = (1, IMAGE_SEGMENT_SIZE_PX, IMAGE_SEGMENT_SIZE_PX, 3)
 class IngredientDetector:
     def __init__(self):
         self.ingredients: List[Ingredient] = IngredientsDao().get_ingredients()
-        self.network = Network("small")
+        self.network = Network()
 
-    def label(self, sub_image: np.ndarray) -> np.ndarray:
+    def label(self, sub_image: np.ndarray) -> Ingredient:
         copy = np.copy(sub_image)
 
         if not len(copy):
@@ -32,5 +32,7 @@ class IngredientDetector:
             print("Skipping as shape was ")
             print(copy.shape)
             return None
-        return self.network.predict(copy)
+        predictions = self.network.predict(copy)
+        index = np.argmax(predictions[0])
+        return self.ingredients[index]
 

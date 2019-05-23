@@ -15,13 +15,13 @@ class Segment:
         self.y2 = y2
 
     def get_segment_of(self, arr: np.ndarray) -> np.ndarray:
-        return arr[self.y1:self.y2+1, self.x1:self.x2+1]
+        return arr[self.y1:self.y2, self.x1:self.x2]
 
     def get_area(self):
         return (self.x2 - self.x1) * (self.y2 - self.y1)
 
     def get_segment_of_image(self, image: np.ndarray) -> np.ndarray:
-        pixels = image[self.y1-1:self.y2-1, self.x1-1: self.x2-1, :]
+        pixels = image[self.y1:self.y2, self.x1: self.x2, :]
         # print(pixels.shape)
         # cv.imshow("tmp", pixels)
         # cv.waitKey(1)

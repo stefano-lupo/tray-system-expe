@@ -77,6 +77,8 @@ def create_menu_items():
 
     mid = MenuItemsDao()
 
+    id.insert_ingredients([Ingredient(i) for i in ["Broccoli", "Chicken", "Green Beans", "Lettuce", "Pasta", "Rice", "Tomato"]])
+
     menu_item1 = MenuItem("Chicken Pasta", [Ingredient(i) for i in ["Chicken", "Pasta", "Green Beans"]])
     menu_item2 = MenuItem("Chicken Rice", [Ingredient(i) for i in ["Chicken", "Rice", "Broccoli"]])
     menu_item3 = MenuItem("Salad", [Ingredient(i) for i in ["Lettuce", "Chicken", "Tomato"]])
@@ -95,7 +97,7 @@ def create_scan():
 
 
 if __name__ == "__main__":
-    # create_db_and_tables()
+    create_db_and_tables()
     create_menu_items()
     # create_scan()
 

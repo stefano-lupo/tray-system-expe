@@ -15,7 +15,7 @@ class ImagesDao(BaseDao):
 
     def get_images(self, ids: List[int] = None) -> List[Image]:
         if ids is not None:
-            rows = self.get(clause="ids in {}".format(self.list_to_in_param(ids)))
+            rows = self.get(clause="id in {}".format(self.list_to_in_param(ids)))
         else:
             rows = self.get()
         return [Image(**r) for r in rows]

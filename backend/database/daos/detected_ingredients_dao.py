@@ -67,6 +67,9 @@ class DetectedIngredientsDao(BaseDao):
         return mass_by_timestamp
 
     def insert_detected_ingredients(self, detected_ingredients: List[DetectedIngredient]) -> int:
+        if len(detected_ingredients) == 0:
+            print("No ingredients detected, skipping")
+            return
         return self.insert([d.get_for_db() for d in detected_ingredients])
 
     def master_query(self) -> List[MasterQueryResult]:

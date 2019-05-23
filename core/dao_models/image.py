@@ -7,3 +7,6 @@ class Image:
                  path: str):
         self.id = id
         self.path = path
+
+    def get_as_json(self):
+        return vars(self)

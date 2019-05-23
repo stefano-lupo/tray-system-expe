@@ -60,7 +60,9 @@ class MenuItemsDao(BaseDao):
 
         missing_ingredients = required_ingredients - current_ingredients
 
-        self.ingredients_dao.insert_ingredients([Ingredient(i) for i in missing_ingredients])
+        if len(missing_ingredients) > 0:
+            self.ingredients_dao.insert_ingredients([Ingredient(i) for i in missing_ingredients])
+
         ingredient_ids_by_name: Dict[str, int] = {i.name: i.id for i in self.ingredients_dao.get_ingredients()}
 
         for menu_item in menu_items:

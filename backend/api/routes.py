@@ -1,4 +1,5 @@
 import os
+import base64
 from uuid import uuid4
 from typing import List, Dict
 from flask import request, jsonify, send_from_directory
@@ -28,11 +29,15 @@ def scan_route():
     json = request.form['json']
     image = request.files['image']
 
-    filename = os.path.join(UPLOAD_DIR, str(uuid4()) + ".jpg")
-    image.save(filename)
+    filename = base64.urlsafe_b64encode(uuid4().bytes)
+    filename = filename.strip(b'=').decode('ascii')
+    filename = str(filename) + ".jpg"
+
+    full_filename = os.path.join(UPLOAD_DIR, filename)
+    image.save(full_filename)
     image_id = images_dao.insert_images([filename])
 
-    scan_request = ScanRequest.from_request(json, filename)
+    scan_request = ScanRequest.from_request(json, full_filename)
     scan = Scan.from_scan_request(scan_request, image_id)
     scan.id = scans_dao.insert_scans([scan])
 
@@ -47,7 +52,6 @@ def waste_by_menu_item_route() -> str:
     res: Dict = detected_ingredients_dao.get_waste_by_menu_item()
     return jsonify(res)
 
-
 @app.route(Endpoint.WASTE_BY_INGREDIENT.get_without_prefix(), methods=["GET"])
 def waste_by_ingredient() -> str:
     res: Dict = detected_ingredients_dao.get_waste_by_ingredient()
@@ -59,8 +63,14 @@ def waste_per_hour() -> str:
 
 @app.route(Endpoint.RECENT_IMAGES.get_without_prefix(), methods=["GET"])
 def get_recent_images():
-    return jsonify(images_dao.get_images())
+    images = images_dao.get_images()
+    return jsonify([i.get_as_json() for i in images])
 
-@app.route(Endpoint.IMAGE.get_without_prefix(), methods=["GET"])
-def serve_image(path):
-    return send_from_directory(UPLOAD_DIR, path)
+print(Endpoint.IMAGE.get_without_prefix())
+
+@app.route("/image/<path:id>", methods=["GET"])
+def serve_image(id):
+    filename = images_dao.get_images([id])[0].path
+    print(filename)
+    print(UPLOAD_DIR)
+    return send_from_directory(UPLOAD_DIR, filename)

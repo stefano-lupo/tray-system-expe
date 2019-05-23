@@ -5,26 +5,40 @@ import cv2 as cv
 
 from tray_system.inputs.RealSenseCapturer import RealSenseCapturer
 
-from tray_system.screen_manager import ScreenManager
-from tray_system.state import State
+# from tray_system.screen_manager import ScreenManager
+# from tray_system.state import State
+
+from core.scan_request import ScanRequest
+from tray_system.data_pusher import DataPusher
+
+PORT = '/dev/ttyACM0'
+BAUD = 9600
+
+class TraySystem:
+
+    def __init__(self):
+        self.data_pusher = DataPusher()
+        self.serial_link = serial.Serial(PORT, BAUD)
+        self.realsense_capturer = RealSenseCapturer()
+
+    def poll_serial(self):
+        while True:
+            line = self.serial_link.readline()
+            print("Serial message was %s " % line)
+
+            colour_img, depth_img = self.realsense_capturer.capture()
+            print(colour_img.shape)
+            print(depth_img.shape)
+            scan_request = ScanRequest(colour_img, depth_img, 1, 1)
+
+            self.data_pusher.push_scan(scan_request)
+            sleep(.1)
+
 
 if __name__ == "__main__":
-    # print("Starting tray system")
-    # screen_manager: ScreenManager = ScreenManager()
-    # # screen_manager.mainloop()
-    # time.sleep(2000)
-    # print("Closing doorS")
+    print("Starting tray system")
+    tray_system = TraySystem()
+    tray_system.poll_serial()
 
-    # screen_manager.progress_state(State.DOOR_CLOSING)
-    # time.sleep(2)
 
-     ser = serial.Serial('/dev/ttyACM0', 9600)
-     realsense_capturer = RealSenseCapturer()
-     while True:
-          # counter +=1
-          # ser.write(str(chr(counter))) # Convert the decimal number to ASCII then send it to the Arduino
-          line = ser.readline()
-          print("Line was %s " % line)
 
-          realsense_capturer.capture()
-          sleep(.1) # Delay for one tenth of a second

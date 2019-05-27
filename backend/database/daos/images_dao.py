@@ -1,6 +1,7 @@
 from typing import List
 
-from .base_dao import BaseDao
+from backend.database.daos.base_dao import BaseDao
+from backend.database.daos.scans_dao import ScansDao
 from core.dao_models.image import Image
 
 TABLE = "images"
@@ -15,7 +16,8 @@ class ImagesDao(BaseDao):
 
     def get_images(self, ids: List[int] = None) -> List[Image]:
         if ids is not None:
-            rows = self.get(clause="id in {}".format(self.list_to_in_param(ids)))
+            clause = "id in {}".format(self.list_to_in_param(ids))
+            rows = self.get(clause=clause)
         else:
             rows = self.get()
         return [Image(**r) for r in rows]
@@ -31,9 +33,20 @@ class ImagesDao(BaseDao):
         return self.fetch_sql(sql)
 
 
+    def get_path(self, image_id, scan_id):
+        if image_id is not None:
+            return self.get_images([image_id])[0].path
+        else:
+            sql = 'select images.path from images ' \
+                'inner join scans on scans.image_id = images.id ' \
+                'where scans.id = {}'.format(scan_id)
+            return self.fetch_sql(sql)[0]['path']
+
 if __name__ == "__main__":
     id = ImagesDao()
-    inserted = id.insert_images(["/test/path/1", "/test/path/2"])
-    print(inserted)
-    images = id.get_images()
-    print(images)
+    path = id.get_path(1, None)
+    print(path)
+    # inserted = id.insert_images(["/test/path/1", "/test/path/2"])
+    # print(inserted)
+    # images = id.get_images()
+    # print(images)

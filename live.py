@@ -6,12 +6,11 @@ import os
 from time import sleep
 
 from core.config import REALSENSE_WIDTH, REALSENSE_HEIGHT
+from core.scan_request import ScanRequest
 from backend.detection.detector import Detector
 from backend.detection.circle_detector import CircleDetector
 from backend.detection.ingredient_detector import IngredientDetector
-
-from keras.preprocessing import image
-from keras.preprocessing.image import ImageDataGenerator
+from tray_system.data_pusher import DataPusher
 
 SAT = 255
 VAL = 255
@@ -23,10 +22,10 @@ INGREDIENTS = ["broccoli", "chicken", "green_beans", "lettuce", "pasta", "rice",
 
 
 def check_for_key():
-        if cv.waitKey(1) & 0xFF == ord('q'):
-            return True
+    if cv.waitKey(1) & 0xFF == ord('q'):
+        return True
 
-        return False
+    return False
 
 def format_predictions(predictions):
     as_strings = ["{0:.2f}".format(p) for p in predictions[0]]
@@ -65,10 +64,14 @@ def process_colour_image(color_image, ingredient_detector):
 
 
 def run_live(ingredient_detector):
+    data_pusher = DataPusher()
     pipeline = rs.pipeline()
     config = rs.config()
     config.enable_stream(rs.stream.depth, REALSENSE_WIDTH, REALSENSE_HEIGHT, rs.format.z16, 30)
     config.enable_stream(rs.stream.color, REALSENSE_WIDTH, REALSENSE_HEIGHT, rs.format.bgr8, 30)
+
+    align_to = rs.stream.color
+    align = rs.align(align_to)
 
     # Start streaming
     pipeline.start(config)
@@ -82,9 +85,11 @@ def run_live(ingredient_detector):
 
     while True:
         frames = pipeline.wait_for_frames(timeout_ms=5000)
-        color = frames.get_color_frame()
+        aligned_frames = align.process(frames)
 
-        depth = frames.get_depth_frame()
+        color = aligned_frames.get_color_frame()
+
+        depth = aligned_frames.get_depth_frame()
         depth = hole_filler.process(depth)
 
         if not depth or not color:
@@ -93,14 +98,23 @@ def run_live(ingredient_detector):
         depth_image = np.asanyarray(colorizer.colorize(depth).get_data())
         color_image = np.asanyarray(color.get_data(), dtype=np.uint8)
 
+        # cv.imwrite("rgb.jpg", color_image)
+        # cv.imwrite("depth.jpg", depth_image)
+
         circle_detector.draw_segmented_circle(color_image)
 
         process_colour_image(color_image, ingredient_detector)
+
+        if cv.waitKey(1) & 0xFF == ord(' '):
+            scan_request = ScanRequest(color_image, depth_image, 1, 1)
+            data_pusher.push_scan(scan_request)
+
         check_for_key()
 
         cv.imshow("Depth", depth_image)
         cv.imshow("RGB", color_image)
-        sleep(1)
+        sleep(0.2)
+        # return
 
 
 def test_image(ingredient_detector: IngredientDetector):
@@ -110,6 +124,7 @@ def test_image(ingredient_detector: IngredientDetector):
     while True:
         if check_for_key():
             break
+
 
 
 if __name__ == "__main__":

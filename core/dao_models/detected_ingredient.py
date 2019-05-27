@@ -16,9 +16,7 @@ class DetectedIngredient:
         return sum([d.mass for d in self.detections])
 
 
-    def get_for_db(self):
+    def get_as_json(self):
         as_dict = dict(vars(self))
         as_dict["detections"] = jp.encode(self.detections, unpicklable=False)
-        # print([d.get_json() for d in self.detections])
-        # print(as_dict)
         return as_dict

@@ -52,7 +52,21 @@ QUERIES = [
         "detections json," +
         PRIMARY_KEY.format(",".join(["scan_id", "ingredient_id"])) + "," +
         FOREIGN_KEY.format("scan_id", "scans") + "," +
-        FOREIGN_KEY.format("ingredient_id", "ingredients") + ");"
+        FOREIGN_KEY.format("ingredient_id", "ingredients") + ");",
+
+    "create view `master` as select " +
+    "scans.id as scan_id, " +
+    "detected_ingredients.detections, " +
+    "ingredients.name as ingredient_name, " +
+    "ingredients.id as ingredient_id, " +
+    "menu_items.name as menu_item_name, " +
+    "menu_items.id as menu_item_id, " +
+    "images.id as image_id " +
+    "from detected_ingredients " +
+    "inner join ingredients on ingredients.id = detected_ingredients.ingredient_id " +
+    "inner join scans on scans.id = detected_ingredients.scan_id " +
+    "inner join menu_items on menu_items.id = scans.menu_item_id " +
+    "inner join images on images.id = scans.image_id"
 ]
 
 
@@ -79,7 +93,7 @@ def create_menu_items():
 
     id.insert_ingredients([Ingredient(i) for i in ["Broccoli", "Chicken", "Green Beans", "Lettuce", "Pasta", "Rice", "Tomato"]])
 
-    menu_item1 = MenuItem("Chicken Pasta", [Ingredient(i) for i in ["Chicken", "Pasta", "Green Beans"]])
+    menu_item1 = MenuItem("Pasta", [Ingredient(i) for i in ["Tomato", "Pasta", "Green Beans"]])
     menu_item2 = MenuItem("Chicken Rice", [Ingredient(i) for i in ["Chicken", "Rice", "Broccoli"]])
     menu_item3 = MenuItem("Salad", [Ingredient(i) for i in ["Lettuce", "Chicken", "Tomato"]])
     mid.insert_menu_items([menu_item1, menu_item2, menu_item3])

@@ -1,3 +1,4 @@
+API_HOST = "192.168.1.17"
 API_PORT = 8080
 UPLOAD_DIR="backend/api/static/images/"
 ASSETS_DIR="assets/"

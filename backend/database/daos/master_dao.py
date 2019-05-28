@@ -33,6 +33,10 @@ class MasterDao(BaseDao):
            by_scan_id[row.scan.id].append(row)
        return by_scan_id
 
+    def get_recent(self, time_delta_hours=24):
+        # TODO:23
+        return self.get_by_ids()
+
     def get_waste_by_menu_item(self):
         rows: List[MasterQueryResult] = self.get_rows()
         food_waste_by_menu_item: Dict[str, int] = defaultdict(int)

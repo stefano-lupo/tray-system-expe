@@ -12,7 +12,7 @@ class Endpoint(Enum):
     WASTE_PER_HOUR = "/waste/per_hour",
     WASTE_FOR_MENU_ITEM = "/waste/menu_item/<id>",
 
-    RECENT_IMAGES = "/images/recent",
+    RECENT_SCANS = "/scans/recent",
     IMAGE = "/image",
 
     DETECTIONS = "/detections",

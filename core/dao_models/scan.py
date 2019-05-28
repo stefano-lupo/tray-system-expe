@@ -1,3 +1,4 @@
+import json
 from typing import List, Dict
 from datetime import datetime
 from core.scan_request import ScanRequest
@@ -23,8 +24,16 @@ class Scan:
     def from_scan_request(cls, scan_request: ScanRequest, image_id: int):
         return cls(scan_request.menu_item_id, image_id, user_id=scan_request.user_id)
 
+    def get_as_dict(self):
+        as_dict = dict(vars(self))
+        as_dict['time'] = self.time.strftime(DATETIME_FORMAT)
+        return as_dict
+
+    def get_as_json(self):
+        return json.dumps(self.get_as_dict())
+
     def get_for_insertion(self):
-        as_dict = vars(self)
+        as_dict = dict(vars(self))
         if self.user_id is None:
             as_dict.pop("user_id")
 

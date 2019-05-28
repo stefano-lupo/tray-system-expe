@@ -69,7 +69,7 @@ def create_db_and_tables():
     for q in QUERIES:
         try:
             print(q)
-            cursor.execute(q)
+            # cursor.execute(q)
         except mysql.Error as e:
             print(e)
 
@@ -107,7 +107,7 @@ def create_scan():
 
 if __name__ == "__main__":
     create_db_and_tables()
-    create_menu_items()
+    # create_menu_items()
     # create_scan()
     cursor.close()
     db.close()

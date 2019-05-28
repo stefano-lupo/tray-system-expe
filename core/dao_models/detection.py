@@ -15,6 +15,9 @@ class Detection:
         self.width = width
         self.height = height
 
+    def get_as_dict(self):
+        return dict(vars(self))
+
     def get_json(self) -> str:
         str = json.dumps(self)
         print(str)

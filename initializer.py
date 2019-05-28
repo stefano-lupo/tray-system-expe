@@ -1,22 +1,19 @@
-from typing import List, Dict, Tuple
-
 import mysql.connector as mysql
 import numpy as np
 import cv2 as cv
 
-# from backend.database.manager import mysql, db
 from core.scan_request import ScanRequest
 from core.config import DB_CONFIG
 
 try:
     db = mysql.connect(**DB_CONFIG)
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor(dictionary=True, buffered=True)
 except mysql.ProgrammingError as e:
     print("Had connection error, trying again without specifying DB")
     without_db = dict(DB_CONFIG)
     without_db.pop("database")
     db = mysql.connect(**without_db)
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor(dictionary=True, buffered=True)
 
 
 UNSIGNED_INT = "integer unsigned not null"
@@ -55,18 +52,16 @@ QUERIES = [
         FOREIGN_KEY.format("ingredient_id", "ingredients") + ");",
 
     "create view `master` as select " +
-    "scans.id as scan_id, " +
-    "detected_ingredients.detections, " +
-    "ingredients.name as ingredient_name, " +
-    "ingredients.id as ingredient_id, " +
-    "menu_items.name as menu_item_name, " +
-    "menu_items.id as menu_item_id, " +
-    "images.id as image_id " +
-    "from detected_ingredients " +
-    "inner join ingredients on ingredients.id = detected_ingredients.ingredient_id " +
-    "inner join scans on scans.id = detected_ingredients.scan_id " +
-    "inner join menu_items on menu_items.id = scans.menu_item_id " +
-    "inner join images on images.id = scans.image_id"
+        "scans.id as scan_id, scans.user_id, scans.time, scans.image_id, " +
+        "detected_ingredients.detections, " +
+        "ingredients.name as ingredient_name, " +
+        "ingredients.id as ingredient_id, " +
+        "menu_items.name as menu_item_name, " +
+        "menu_items.id as menu_item_id " +
+        "from detected_ingredients " +
+        "inner join ingredients on ingredients.id = detected_ingredients.ingredient_id " +
+        "inner join scans on scans.id = detected_ingredients.scan_id " +
+        "inner join menu_items on menu_items.id = scans.menu_item_id "
 ]
 
 
@@ -114,4 +109,6 @@ if __name__ == "__main__":
     create_db_and_tables()
     create_menu_items()
     # create_scan()
+    cursor.close()
+    db.close()
 

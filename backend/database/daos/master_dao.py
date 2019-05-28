@@ -66,8 +66,6 @@ class MasterDao(BaseDao):
         return detections_by_scan_id
 
 
-
-
 if __name__ == "__main__":
     md = MasterDao()
     d = md.get_detections_by_scan_id()

@@ -13,6 +13,7 @@ class MasterQueryResult:
     def __init__(self, row: Dict):
         self.ingredient = Ingredient(row[INGREDIENT_NAME_ALIAS], row[INGREDIENT_ID_ALIAS])
         self.menu_item_name = row[MENU_ITEM_NAME_ALIAS]
+        self.image_id = row["image_id"]
         self.scan = Scan(row[MENU_ITEM_ID_ALIAS], row["image_id"], row["time"], row["scan_id"], row["user_id"])
         detections = [Detection(**d) for d in jp.decode(row["detections"])]
         self.detected_ingredients = DetectedIngredient(self.scan.id, self.ingredient.id, detections)

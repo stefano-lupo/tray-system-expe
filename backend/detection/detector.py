@@ -14,10 +14,13 @@ from core.dao_models.ingredient import Ingredient
 from core.dao_models.detection import Detection
 from core.dao_models.detected_ingredient import DetectedIngredient
 
+masses = []
 
 def calculate_mass(depth_map: np.ndarray, segment: Segment) -> int:
-    return int(np.average(segment.get_segment_of(depth_map)) * DEPTH_UNIT_SCALE_FACTOR * segment.get_area())
-
+    # mass = int(np.average(segment.get_segment_of(depth_map)) * DEPTH_UNIT_SCALE_FACTOR * segment.get_area())
+    # masses.append(mass)
+    # return mass
+    return int(np.average(segment.get_segment_of(depth_map)))
 
 class Detector:
     def __init__(self):
@@ -37,18 +40,19 @@ class Detector:
                 ingredient = self.ingredient_detector.label(segment.get_segment_of(image))
                 if ingredient is None:
                     continue
-                detection: Detection = Detection(segment.x1, segment.y1, calculate_mass(depth_map, segment))
+                mass = calculate_mass(depth_map, segment)
+                print(mass)
+                detection: Detection = Detection(segment.x1, segment.y1, mass)
                 detected_ingredients[ingredient].append(detection)
 
-        results =  [DetectedIngredient(scan_id, k.id, v) for (k, v) in detected_ingredients.items()]
+        results = [DetectedIngredient(scan_id, k.id, v) for (k, v) in detected_ingredients.items()]
         print("Found {} detected ingredients: {}".format(len(results), [r.ingredient_id for r in results]))
         return results
 
 
 if __name__ == "__main__":
     img: np.ndarray = cv.imread("../../test.jpg")
-    depth_map = np.random.rand(img.shape[0], img.shape[1])
-    detector = Detector()
+    depth_map = 500 * np.random.rand(img.shape[0], img.shape[1])
     scan_req = ScanRequest(img, depth_map, 1, 1)
 
     from tray_system.data_pusher import DataPusher

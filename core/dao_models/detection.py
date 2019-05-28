@@ -1,4 +1,4 @@
-import jsonpickle as jp
+import json
 from core.config import IMAGE_SEGMENT_SIZE_PX as WIDTH, IMAGE_SEGMENT_SIZE_PX as HEIGHT
 
 
@@ -16,7 +16,7 @@ class Detection:
         self.height = height
 
     def get_json(self) -> str:
-        str = jp.encode(self, unpicklable=False)
+        str = json.dumps(self)
         print(str)
         return str
 

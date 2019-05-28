@@ -13,6 +13,7 @@ from core.dao_models.detected_ingredient import DetectedIngredient
 from core.dao_models.scan import Scan
 from core.endpoints import Endpoint
 from core.scan_request import ScanRequest
+from core.dao_models.master_query_result import MasterQueryResult
 
 from backend.database.daos.detected_ingredients_dao import DetectedIngredientsDao
 from backend.database.daos.images_dao import ImagesDao
@@ -59,14 +60,17 @@ def waste_by_menu_item_route() -> str:
     res: Dict = master_dao.get_waste_by_menu_item()
     return jsonify(res)
 
+
 @app.route(Endpoint.WASTE_BY_INGREDIENT.get_without_prefix(), methods=["GET"])
 def waste_by_ingredient() -> str:
     res: Dict = master_dao.get_waste_by_ingredient()
     return jsonify(res)
 
+
 @app.route(Endpoint.WASTE_PER_HOUR.get_without_prefix(), methods=["GET"])
 def waste_per_hour() -> str:
     return jsonify(master_dao.get_waste_per_hour())
+
 
 @app.route(Endpoint.RECENT_IMAGES.get_without_prefix(), methods=["GET"])
 def get_recent_images():
@@ -74,10 +78,14 @@ def get_recent_images():
     return jsonify([i.get_as_json() for i in images])
 
 
-@app.route(Endpoint.DETECTIONS_BY_SCAN_ID.get_without_prefix(), methods=["GET"])
-def get_detection_by_scan_id(scan_ids):
-    as_dict = {k: v.get_as_json() for (k, v) in master_dao.get_detections_by_scan_id(scan_ids).items()}
+@app.route(Endpoint.DETECTIONS.get_without_prefix(), methods=["GET"])
+def get_detection_by_scan_id():
+    scan_id = request.args.get('scan_id')
+    if scan_id is None:
+        abort(400, "A scan id must be provided")
+    as_dict = {k: v.get_as_json() for (k, v) in master_dao.get_detections_by_scan_id(scan_id).items()}
     return jsonify(as_dict)
+
 
 @app.route(Endpoint.IMAGE.get_without_prefix(), methods=["GET"])
 def get_image():
@@ -88,32 +96,46 @@ def get_image():
         abort(400, "Either an image_id or a scan_id must be provided as query params")
 
     file_name = images_dao.get_path(image_id, scan_id)
+    if file_name is None:
+        abort(404, "No image found for image_id {}, scan_id {}".format(image_id, scan_id))
     return redirect("/static/images/{}".format(file_name))
 
-@app.route('/detections/image/<int:scan_id>')
-def get_image_with_detections(scan_id):
+
+@app.route(Endpoint.DETECTIONS_IMAGE.get_without_prefix(), methods=["GET"])
+def get_image_with_detections():
+    scan_id = request.args.get('scan_id')
     MAX_HUE = 180
     SAT = 255
     VAL = 255
-    images = images_dao.get_images()
+
+    images = images_dao.get_image_by_scan_id(scan_id)
     if len(images) == 0:
-        print("No image for id %s " % scan_id)
+        abort(404, "No image for scan_id %s " % scan_id)
+
     image = images[0]
-    filename = image.path
+    filename = image["path"]
     img = cv.imread(os.path.join(UPLOAD_DIR, filename))
-    detected_ingredients = images_dao.get_ingredients_in_image(scan_id)
+    detected_ingredients = images_dao.get_ingredients_in_image(image["image_id"])
     for detected_ingredient in detected_ingredients:
-        hue = max(0, min((detected_ingredient["ingredient_id"] + 1) * (MAX_HUE / 7), 255))
-        hsv = np.uint8([[[hue, SAT, VAL]]])
-        bgr = cv.cvtColor(hsv, cv.COLOR_HSV2BGR)
-        color = tuple([int(i) for i in bgr[0][0]])
+        # # hue = max(0, min((detected_ingredient["ingredient_id"] + 1) * (MAX_HUE / 7), 255))
+        # hue = max(0, min((detected_ingredient["mass"])))
+        # hsv = np.uint8([[[hue, SAT, VAL]]])
+        # bgr = cv.cvtColor(hsv, cv.COLOR_HSV2BGR)
+        # color = tuple([int(i) for i in bgr[0][0]])
         detections = json.loads(detected_ingredient["detections"])
         for detection in detections:
             x = detection["x"]
             y = detection["y"]
+            mass = detection["mass"]
+            print(mass)
+            hue = mass * MAX_HUE / 1100
+            hsv = np.uint8([[[hue, SAT, VAL]]])
+            bgr = cv.cvtColor(hsv, cv.COLOR_HSV2BGR)
+            color = tuple([int(i) for i in bgr[0][0]])
             cv.rectangle(img, (x, y), (x + detection["width"], y + detection["height"]), color, 2)
             # detect.segment.draw_segment(color_image, color, 1)
     return serve_pil_image(cv.cvtColor(img, cv.COLOR_BGR2RGB))
+
 
 def serve_pil_image(pil_img):
     img_io = BytesIO()

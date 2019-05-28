@@ -41,9 +41,7 @@ class MenuItemsDao(BaseDao):
 
         clause = "" if selector is None else 'where menu_items.{} in ({})'.format(selector, query_val)
         sql = MENU_ITEM_INGREDIENT_QUERY + clause
-        print(sql)
-        self.cursor.execute(sql)
-        rows = self.cursor.fetchall()
+        rows = self.fetch_sql(sql)
 
         rows_by_menu_item = defaultdict(list)
         for row in rows:

@@ -1,7 +1,6 @@
 from typing import List
 
 from backend.database.daos.base_dao import BaseDao
-from backend.database.daos.scans_dao import ScansDao
 from core.dao_models.image import Image
 
 TABLE = "images"
@@ -25,9 +24,15 @@ class ImagesDao(BaseDao):
     def insert_images(self, image_paths: List[str]) -> int:
         return self.insert([{PATH: i} for i in image_paths])
 
+    def get_image_by_scan_id(self, scan_id):
+        sql = 'select scans.id as scan_id, images.id as image_id, images.path ' \
+              'from scans ' \
+              'inner join images on scans.image_id = images.id where scans.id = {}'.format(scan_id)
+        return self.fetch_sql(sql)
+
     def get_ingredients_in_image(self, image_id):
-        sql = 'select detected_ingredients.ingredient_id, detected_ingredients.detections, images.id f' \
-              'rom detected_ingredients ' \
+        sql = 'select detected_ingredients.ingredient_id, detected_ingredients.detections, images.id, images.path ' \
+              'from detected_ingredients ' \
               'inner join scans on detected_ingredients.scan_id = scans.id ' \
               'inner join images on scans.image_id = images.id where images.id = {}'.format(image_id)
         return self.fetch_sql(sql)
@@ -35,12 +40,17 @@ class ImagesDao(BaseDao):
 
     def get_path(self, image_id, scan_id):
         if image_id is not None:
-            return self.get_images([image_id])[0].path
+            rows = self.get_images([image_id])
         else:
             sql = 'select images.path from images ' \
                 'inner join scans on scans.image_id = images.id ' \
                 'where scans.id = {}'.format(scan_id)
-            return self.fetch_sql(sql)[0]['path']
+            rows = self.fetch_sql(sql)
+
+        if len(rows) is 0:
+            return None
+
+        return rows[0]['path']
 
 if __name__ == "__main__":
     id = ImagesDao()

@@ -1,20 +1,24 @@
-from typing import List, Tuple, Dict
+from typing import List, Dict
 
-from backend.database.manager import cursor, db
+import mysql.connector as mysql
+from core.config import DB_CONFIG
+# from backend.database.manager import db, get_cursor
 
 
 class BaseDao:
     def __init__(self, table_name: str, columns: List[str]):
-        self.table_name:str = table_name
+        self.table_name: str = table_name
         self.columns = columns
-        self.db = db
-        self.cursor = cursor
+        # self.db = mysql.connect(**DB_CONFIG)
+
+    def get_cursor(self):
+        db = mysql.connect(**DB_CONFIG)
+        return db, db.cursor(dictionary=True, buffered=True)
 
     def comma_seperate(self, lst: List) -> str:
         return ",".join(lst)
 
     def list_to_in_param(self, lst: List) -> str:
-        print(lst)
         return "({})".format(",".join([str(l) for l in lst]))
 
     def insert(self, rows: List[Dict]) -> int:
@@ -27,13 +31,20 @@ class BaseDao:
         sql = "insert into {} ({}) values ({})".format(self.table_name, cols, placeholders)
         print(sql)
 
+        db, cursor = self.get_cursor()
         cursor.executemany(sql, vals)
         db.commit()
-        return cursor.lastrowid
+        id = cursor.lastrowid
+        cursor.close()
+        # db.cursor.close()
+        return id
 
     def fetch_sql(self, sql: str) -> List[Dict]:
+        _, cursor = self.get_cursor()
         cursor.execute(sql)
-        return cursor.fetchall()
+        results = cursor.fetchall()
+        cursor.close()
+        return results
 
     def get(self, clause: str="", cols=None) -> List[Dict]:
         cols = self.columns if cols is None else cols
@@ -41,6 +52,4 @@ class BaseDao:
         if clause is not "":
             clause = "where {}".format(clause)
         sql = "select {} from {} {}".format(cols, self.table_name, clause)
-        print(sql)
-        cursor.execute(sql)
-        return cursor.fetchall()
+        return self.fetch_sql(sql)

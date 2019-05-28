@@ -24,7 +24,10 @@ class IngredientDetector:
             print("Skipping as copy was empty")
             return None
 
-        copy = cv.cvtColor(copy, cv.COLOR_BGR2RGB)
+        try:
+            copy = cv.cvtColor(copy, cv.COLOR_BGR2RGB)
+        except:
+            return None
         copy = np.expand_dims(copy, axis=0)
         copy = np.true_divide(copy, 255)
 

@@ -1,12 +1,9 @@
 from time import sleep
-import serial
 import cv2 as cv
-# import pyrealsense2 as rs
 
-from tray_system.inputs.real_sense_capturer import RealSenseCapturer
 
-# from tray_system.screen_manager import ScreenManager
-# from tray_system.state import State
+from tray_system.real_sense_capturer import RealSenseCapturer
+
 
 from core.scan_request import ScanRequest
 from tray_system.data_pusher import DataPusher
@@ -20,14 +17,6 @@ class TraySystem:
         self.data_pusher = DataPusher()
         # self.serial_link = serial.Serial(PORT, BAUD)
         self.realsense_capturer = RealSenseCapturer()
-
-
-    def poll_keyboard(self):
-        while True:
-            # if cv.waitKey(1) & 0xFF == ord('q'):
-            #     return
-            if cv.waitKey(1) & 0xFF == ord(' '):
-                self.scan()
 
     def poll_serial(self):
         while True:
@@ -48,7 +37,6 @@ class TraySystem:
 if __name__ == "__main__":
     print("Starting tray system")
     tray_system = TraySystem()
-    tray_system.poll_keyboard()
     # tray_system.poll_serial()
 
 

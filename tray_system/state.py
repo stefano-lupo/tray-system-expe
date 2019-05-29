@@ -1,17 +1,13 @@
 from enum import Enum
 
-from .screens.ready_screen import ReadyScreen
-from .screens.door_closing import DoorClosing
 
 class State(Enum):
-    READY = ReadyScreen,
-    # INVALID_RFID = 2,
-    # ROLLER_FEEDING = 3,
-    DOOR_CLOSING = DoorClosing,
-    # IMAGE_CAPTURE = 5,
-    # LOWERING = 6,
-    # LOWERING_ERROR = 7,
-    # LOWERING_FINISH = 8
-
-
-
+    READY = 1,
+    INVALID_RFID = 2,
+    RFID_READ = 3,
+    ROLLER_FEEDING = 4,
+    DOOR_CLOSING = 5,
+    IMAGE_CAPTURE = 6,
+    LOWERING = 7,
+    LOWERING_ERROR = 8,
+    LOWERING_FINISH = 9

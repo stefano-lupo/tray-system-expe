@@ -22,5 +22,5 @@ class DetectedIngredient:
 
     def get_as_json(self):
         as_dict = dict(vars(self))
-        as_dict["detections"] = json.dumps(self.detections)
+        as_dict["detections"] = json.dumps([d.get_as_dict() for d in self.detections])
         return as_dict

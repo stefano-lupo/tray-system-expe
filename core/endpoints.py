@@ -1,7 +1,8 @@
 from enum import Enum
 
 from core.config import API_PORT
-BASE_URL = "http://localhost:{}".format(API_PORT)
+# BASE_URL = "http://localhost:{}".format(API_PORT)
+BASE_URL = "http://192.168.1.17:{}".format(API_PORT)
 
 
 class Endpoint(Enum):

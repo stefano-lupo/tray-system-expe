@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from backend.database.daos.base_dao import BaseDao
 from core.dao_models.master_query_result import MasterQueryResult
+from core.dao_models.scan_with_data import ScanWithData
 from core.dao_models.menu_item import MENU_ITEM_NAME_ALIAS, MENU_ITEM_ID_ALIAS
 from core.dao_models.ingredient import INGREDIENT_NAME_ALIAS, INGREDIENT_ID_ALIAS
 
@@ -34,8 +35,8 @@ class MasterDao(BaseDao):
        return by_scan_id
 
     def get_recent(self, time_delta_hours=24):
-        # TODO:23
-        return self.get_by_ids()
+        # TODO:24
+        return {k: ScanWithData(v) for (k, v) in self.get_by_ids().items()}
 
     def get_waste_by_menu_item(self):
         rows: List[MasterQueryResult] = self.get_rows()

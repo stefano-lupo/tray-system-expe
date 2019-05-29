@@ -75,7 +75,8 @@ def waste_per_hour() -> str:
 @app.route(Endpoint.RECENT_SCANS.get_without_prefix(), methods=["GET"])
 def get_recent_scans():
     mqrs_by_id = master_dao.get_recent()
-    return jsonify({k: [mqr.get_as_dict() for mqr in mqrs] for (k, mqrs) in mqrs_by_id.items()})
+    return jsonify({k: swd.get_as_dict() for (k, swd) in mqrs_by_id.items()})
+    # return jsonify({k: [mqr.get_as_dict() for mqr in mqrs] for (k, mqrs) in mqrs_by_id.items()})
     # return jsonify({k: [v2.get_as_json() for v2 in v] for (k, v) in mqrs.items()})
 
 @app.route(Endpoint.DETECTIONS.get_without_prefix(), methods=["GET"])
@@ -83,7 +84,9 @@ def get_detection_by_scan_id():
     scan_id = request.args.get('scan_id')
     if scan_id is None:
         abort(400, "A scan id must be provided")
-    as_dict = {k: v.get_as_json() for (k, v) in master_dao.get_detections_by_scan_id(scan_id).items()}
+
+
+    as_dict = {k: v.get_as_dict() for (k, v) in master_dao.get_detections_by_scan_id(scan_id).items()}
     return jsonify(as_dict)
 
 

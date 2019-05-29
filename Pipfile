@@ -19,6 +19,7 @@ tensorflow = "*"
 pillow = "*"
 pyserial = "*"
 serial = "*"
+websockets = "*"
 
 [requires]
 python_version = "3.6"

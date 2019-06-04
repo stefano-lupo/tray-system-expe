@@ -17,9 +17,10 @@ pyrealsense2 = "*"
 keras = "*"
 tensorflow = "*"
 pillow = "*"
-pyserial = "*"
-serial = "*"
 websockets = "*"
+websocket-client = "*"
+simple-websocket-server = "*"
+pyserial = "*"
 
 [requires]
 python_version = "3.6"

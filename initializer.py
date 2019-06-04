@@ -102,7 +102,7 @@ def create_scan():
     from tray_system.data_pusher import DataPusher
     dp = DataPusher()
     dp.push_scan(scan_req)
-    # detector.handle_scan(scan_req)
+    # detector.run_detection(scan_req)
 
 
 if __name__ == "__main__":

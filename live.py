@@ -89,7 +89,7 @@ def run_live(ingredient_detector):
 
         color = aligned_frames.get_color_frame()
         depth = aligned_frames.get_depth_frame()
-        depth = hole_filler.process(depth)
+        # depth = hole_filler.process(depth)
         # depth2 = depth.get_distance(100, 100)
         # print(depth2)
 
@@ -99,8 +99,8 @@ def run_live(ingredient_detector):
         depth_frame_data = np.asanyarray(depth.get_data())
         color_frame_data = np.asanyarray(color.get_data())
 
-        # depth_image = np.asanyarray(colorizer.colorize(depth).get_data(), dtype=np.uint8)
-        depth_image = np.asanyarray(depth.get_data(), dtype=np.uint8)
+        depth_image = np.asanyarray(colorizer.colorize(depth).get_data(), dtype=np.uint8)
+        # depth_image = np.asanyarray(depth.get_data(), dtype=np.uint8)
 
         color_image = np.asanyarray(color.get_data(), dtype=np.uint8)
         color_image_with_overlay = np.copy(color_image)

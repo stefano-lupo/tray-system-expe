@@ -31,6 +31,9 @@ class DataPusher:
             print("Successfully pushed scan to server")
         else:
             print("Unable to push scan to server")
+        
+        # TODO: Return scan id
+        return resp.data
 
     def post(self, endpoint: Endpoint, obj: Dict):
         try:

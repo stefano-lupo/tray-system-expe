@@ -83,6 +83,6 @@ class CircleDetector:
 
     def draw_segmented_circle(self, image):
         segmented_circles: List[SegmentedCircle] = self.get_segmented_circles(image)
-
+        print("Found %d circles" % len(segmented_circles)) 
         for segmented_circle in segmented_circles:
             segmented_circle.draw(image)

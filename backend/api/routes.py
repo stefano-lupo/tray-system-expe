@@ -20,6 +20,7 @@ from backend.database.daos.images_dao import ImagesDao
 from backend.database.daos.scans_dao import ScansDao
 from backend.database.daos.master_dao import MasterDao
 from backend.detection.detector import Detector
+from backend.detection.scan_handler import ScanHandler
 
 from io import BytesIO
 from PIL import Image
@@ -30,6 +31,7 @@ detected_ingredients_dao: DetectedIngredientsDao = DetectedIngredientsDao()
 master_dao: MasterDao = MasterDao()
 
 detector: Detector = Detector()
+scan_handler: ScanHandler = ScanHandler()
 
 
 @app.route(Endpoint.SCAN.get_without_prefix(), methods=["POST"])
@@ -37,22 +39,24 @@ def scan_route():
     json = request.form['json']
     image = request.files['image']
 
-    filename = base64.urlsafe_b64encode(uuid4().bytes)
-    filename = filename.strip(b'=').decode('ascii')
-    filename = str(filename) + ".jpg"
+    return scan_handler.handle_endpoint_scan(image, json)
 
-    full_filename = os.path.join(UPLOAD_DIR, filename)
-    image.save(full_filename)
-    image_id = images_dao.insert_images([filename])
+    # filename = base64.urlsafe_b64encode(uuid4().bytes)
+    # filename = filename.strip(b'=').decode('ascii')
+    # filename = str(filename) + ".jpg"
 
-    scan_request = ScanRequest.from_request(json, full_filename)
-    scan = Scan.from_scan_request(scan_request, image_id)
-    scan.id = scans_dao.insert_scans([scan])
+    # full_filename = os.path.join(UPLOAD_DIR, filename)
+    # image.save(full_filename)
+    # image_id = images_dao.insert_images([filename])
 
-    detected_ingredients: List[DetectedIngredient] = detector.handle_scan(scan_request, scan.id)
-    detected_ingredients_dao.insert_detected_ingredients(detected_ingredients)
+    # scan_request = ScanRequest.from_request(json, full_filename)
+    # scan = Scan.from_scan_request(scan_request, image_id)
+    # scan.id = scans_dao.insert_scans([scan])
 
-    return "Scan successful"
+    # detected_ingredients: List[DetectedIngredient] = detector.run_detection(scan_request, scan.id)
+    # detected_ingredients_dao.insert_detected_ingredients(detected_ingredients)
+
+    # return scan.id
 
 
 @app.route(Endpoint.WASTE_BY_MENU_ITEM.get_without_prefix(), methods=["GET"])
@@ -76,15 +80,12 @@ def waste_per_hour() -> str:
 def get_recent_scans():
     mqrs_by_id = master_dao.get_recent()
     return jsonify({k: swd.get_as_dict() for (k, swd) in mqrs_by_id.items()})
-    # return jsonify({k: [mqr.get_as_dict() for mqr in mqrs] for (k, mqrs) in mqrs_by_id.items()})
-    # return jsonify({k: [v2.get_as_json() for v2 in v] for (k, v) in mqrs.items()})
 
 @app.route(Endpoint.DETECTIONS.get_without_prefix(), methods=["GET"])
 def get_detection_by_scan_id():
     scan_id = request.args.get('scan_id')
     if scan_id is None:
         abort(400, "A scan id must be provided")
-
 
     as_dict = {k: v.get_as_dict() for (k, v) in master_dao.get_detections_by_scan_id(scan_id).items()}
     return jsonify(as_dict)

@@ -42,6 +42,11 @@ class SegmentedCircle:
 
     def get_segments_of_image(self, image):
         return [s.get_segment_of_image(image) for s in self.segments]
+    
+    def get_max_value_in_circle(self, depth_image):
+        segment_pixels = self.get_segments_of_image(depth_image)
+        max_value = np.max([np.max(s) for s in segment_pixels])
+        return max_value
 
     def draw(self, image: np.ndarray):
         cv.circle(image, (self.circle.x, self.circle.y), self.circle.r, (0, 255, 0), 2)

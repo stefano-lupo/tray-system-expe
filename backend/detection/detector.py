@@ -4,7 +4,7 @@ import numpy as np
 from collections import defaultdict
 from typing import List, Dict
 
-from core.config import DEPTH_UNIT_SCALE_FACTOR
+from core.config import DEPTH_UNIT_SCALE_FACTOR, PLATE_DIAMETER_MM
 from .circle_detector import CircleDetector
 from .ingredient_detector import IngredientDetector
 from .segmented_circle import SegmentedCircle, Segment
@@ -14,12 +14,14 @@ from core.dao_models.ingredient import Ingredient
 from core.dao_models.detection import Detection
 from core.dao_models.detected_ingredient import DetectedIngredient
 
-masses = []
 
-def calculate_mass(depth_map: np.ndarray, segment: Segment) -> int:
+def calculate_mass(depth_map: np.ndarray, segment: Segment, mm_per_pixel: int) -> int:
     # mass = int(np.average(segment.get_segment_of(depth_map)) * DEPTH_UNIT_SCALE_FACTOR * segment.get_area())
+    area = segment.get_area() * (mm_per_pixel ** 2)
+    average_depth = int(np.average(segment.get_segment_of(depth_map)))
     # masses.append(mass)
     # return mass
+
     return int(np.average(segment.get_segment_of(depth_map)))
 
 class Detector:
@@ -27,7 +29,7 @@ class Detector:
         self.circle_detector = CircleDetector()
         self.ingredient_detector = IngredientDetector()
 
-    def handle_scan(self, scan_request: ScanRequest, scan_id: int) -> List[DetectedIngredient]:
+    def run_detection(self, scan_request: ScanRequest, scan_id: int) -> List[DetectedIngredient]:
         image = np.array(scan_request.image)
 
         depth_map = np.array(scan_request.depth_map)
@@ -36,11 +38,16 @@ class Detector:
         detected_ingredients: Dict[Ingredient, List[Detection]] = defaultdict(list)
         for segmented_circle in segmented_circles:
             segmented_circle.draw(image)
+            # radius_pixels = segmented_circle.circle.r
+            # mm_per_pixel = (PLATE_DIAMETER_MM / 2) / radius_pixels
+            # max_depth_in_circle = segmented_circle.get_max_value_in_circle(depth_map)
+            # print("Max depth in circle was %d" % max_depth_in_circle)
+            # depth_map = max_depth_in_circle - depth_map
             for segment in segmented_circle.segments:
                 ingredient = self.ingredient_detector.label(segment.get_segment_of(image))
                 if ingredient is None:
                     continue
-                mass = calculate_mass(depth_map, segment)
+                mass = calculate_mass(depth_map, segment, mm_per_pixel)
                 print(mass)
                 detection: Detection = Detection(segment.x1, segment.y1, mass)
                 detected_ingredients[ingredient].append(detection)
@@ -58,4 +65,4 @@ if __name__ == "__main__":
     from tray_system.data_pusher import DataPusher
     dp = DataPusher()
     dp.push_scan(scan_req)
-    # detector.handle_scan(scan_req)
+    # detector.run_detection(scan_req)

@@ -10,7 +10,7 @@ DB_CONFIG = {
     "database": "tray_system"
 }
 
-IMAGE_SEGMENT_SIZE_PX = 32
+IMAGE_SEGMENT_SIZE_PX = 50
 NUM_CLASSES = 7
 SMALL_MODEL = "models/small_cnn.h5"
 RES_NET_MODEL = "models/res_net_32.h5"

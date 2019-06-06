@@ -90,7 +90,7 @@ def get_images(next_id: int = 0):
     for x in range(5):
         pipeline.wait_for_frames()
 
-    # circle_detector: CircleDetector = CircleDetector()
+    circle_detector: CircleDetector = CircleDetector()
     # colorizer = rs.colorizer()
     # hole_filler = rs.hole_filling_filter()
 
@@ -109,7 +109,7 @@ def get_images(next_id: int = 0):
         color_image = np.asanyarray(color.get_data(), dtype=np.uint8)
 
         color_image_with_grid = np.copy(color_image)
-        # circle_detector.draw_segmented_circle(color_image_with_grid)
+        circle_detector.draw_segmented_circle(color_image_with_grid)
 
         # cv.imshow("Depth", depth_image)
         cv.imshow("RGB", color_image_with_grid)
@@ -141,8 +141,8 @@ if __name__ == "__main__":
         dirs = [int(d) for d in dirs]
         next_id = 0 if len(dirs) == 0 else max(dirs) + 1
 
-    # generate_samples()
+    generate_samples()
     # train_test_split()
     #
-    print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
-    get_images(next_id)
+    # print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
+    # get_images(next_id)

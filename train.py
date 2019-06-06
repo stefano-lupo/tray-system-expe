@@ -1,22 +1,20 @@
 import os
-# import pyrealsense2 as rs
-rs = {}
+import pyrealsense2 as rs
 import numpy as np
 import cv2 as cv
 import shutil
-
+from time import sleep
 from backend.detection.circle_detector import CircleDetector
 from backend.detection.segmented_circle import Segment, SegmentedCircle
 from core.config import IMAGE_SEGMENT_SIZE_PX
 
-WIDTH = 640
-HEIGHT = 480
-INGREDIENT = "tomato"
+WIDTH = 1280
+HEIGHT = 720
+INGREDIENT = "cutlery"
 TRAINING_IMAGE_DIR = "./training_images"
 ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, INGREDIENT)
 
 EVAL_SPLIT_SIZE = 0.2
-
 OUTPUT_DIR = "split_training_images_{}".format(IMAGE_SEGMENT_SIZE_PX)
 
 
@@ -79,6 +77,7 @@ def train_test_split():
 
 
 def get_images(next_id: int = 0):
+    # Set up camera
     pipeline = rs.pipeline()
     config = rs.config()
     config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, 30)
@@ -91,31 +90,28 @@ def get_images(next_id: int = 0):
     for x in range(5):
         pipeline.wait_for_frames()
 
-    circle_detector: CircleDetector = CircleDetector()
-    colorizer = rs.colorizer()
-    hole_filler = rs.hole_filling_filter()
-
-    # Skip 5 first frames to give the Auto-Exposure time to adjust
-    for x in range(5):
-        pipeline.wait_for_frames()
+    # circle_detector: CircleDetector = CircleDetector()
+    # colorizer = rs.colorizer()
+    # hole_filler = rs.hole_filling_filter()
 
     while True:
         frames = pipeline.wait_for_frames(timeout_ms=5000)
         color = frames.get_color_frame()
 
-        depth = frames.get_depth_frame()
-        depth = hole_filler.process(depth)
+        depth = 1
+        # depth = frames.get_depth_frame()
+        # depth = hole_filler.process(depth)
 
         if not depth or not color:
             continue
 
-        depth_image = np.asanyarray(colorizer.colorize(depth).get_data())
+        # depth_image = np.asanyarray(colorizer.colorize(depth).get_data())
         color_image = np.asanyarray(color.get_data(), dtype=np.uint8)
 
         color_image_with_grid = np.copy(color_image)
-        circle_detector.draw_segmented_circle(color_image_with_grid)
+        # circle_detector.draw_segmented_circle(color_image_with_grid)
 
-        cv.imshow("Depth", depth_image)
+        # cv.imshow("Depth", depth_image)
         cv.imshow("RGB", color_image_with_grid)
 
         if cv.waitKey(1) & 0xFF == ord(' '):
@@ -132,6 +128,8 @@ def get_images(next_id: int = 0):
 
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
+        
+        sleep(0.4)
 
 
 if __name__ == "__main__":
@@ -143,8 +141,8 @@ if __name__ == "__main__":
         dirs = [int(d) for d in dirs]
         next_id = 0 if len(dirs) == 0 else max(dirs) + 1
 
-    generate_samples()
-    train_test_split()
+    # generate_samples()
+    # train_test_split()
     #
-    # print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
-    # get_images(next_id)
+    print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
+    get_images(next_id)

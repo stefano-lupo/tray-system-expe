@@ -21,6 +21,7 @@ class Segment:
         return (self.x2 - self.x1) * (self.y2 - self.y1)
 
     def get_segment_of_image(self, image: np.ndarray) -> np.ndarray:
+        print(image.shape)
         pixels = image[self.y1:self.y2, self.x1: self.x2, :]
         # print(pixels.shape)
         # cv.imshow("tmp", pixels)

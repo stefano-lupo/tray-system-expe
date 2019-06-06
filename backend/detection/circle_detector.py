@@ -1,8 +1,8 @@
-# import the necessary packages
 import math
 import cv2
 import numpy as np
 
+import timeit
 from typing import List, Dict, Set, Tuple
 
 from core.config import \
@@ -45,21 +45,43 @@ class CircleDetector:
         self.min_distance_between_centers: int = min_distance_between_centers
 
     def get_segmented_circles(self, image: np.ndarray) -> List[SegmentedCircle]:
+        start = timeit.default_timer()
+        image = cv2.resize(image, (640, 360))
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        min_dist_centers = 640
+        min_radius = 100
+        max_radius = 200
         circles = cv2.HoughCircles(gray,
                                    cv2.HOUGH_GRADIENT,
                                    1.2,
-                                   self.min_distance_between_centers,
-                                   minRadius=self.min_radius)
+                                   min_dist_centers,
+                                   minRadius=min_radius,
+                                   maxRadius=max_radius)
+        stop = timeit.default_timer()
+        # print("detecting circle took %d" % (stop - start))
+
+        if circles is None or circles is []:
+            min_radius = 50
+            max_radius = 100
+            circles = cv2.HoughCircles(gray,
+                                       cv2.HOUGH_GRADIENT,
+                                       1.2,
+                                       min_dist_centers,
+                                       minRadius=min_radius,
+                                       maxRadius=max_radius)
 
         if circles is None:
             return []
-        circles = [Circle(c) for c in circles]
+        print(circles[0])
+        circles = [Circle(c * 2) for c in circles]
 
         segmented_circles: List[SegmentedCircle] = []
+        start = timeit.default_timer()
         for circle in circles:
             segmented_circles.append(self.get_segmented_circle(circle))
 
+        stop = timeit.default_timer()
+        print("Segmenting circles took %d" % (stop - start))
         return segmented_circles
 
     # TODO: Multithread

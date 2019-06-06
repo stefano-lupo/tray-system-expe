@@ -1,5 +1,6 @@
 import pyrealsense2 as rs
 import numpy as np
+import timeit
 
 from core.config import REALSENSE_WIDTH, REALSENSE_HEIGHT
 
@@ -20,6 +21,7 @@ class RealSenseCapturer:
             self.pipeline.wait_for_frames()
 
     def capture(self, hole_fill=True):
+        start = timeit.default_timer()
         frames = self.pipeline.wait_for_frames(timeout_ms=5000)
         color = frames.get_color_frame()
         depth = frames.get_depth_frame()
@@ -36,6 +38,9 @@ class RealSenseCapturer:
         
         depth_scale = self.profile.get_device().first_depth_sensor().get_depth_scale()
         depth_image = depth_image * depth_scale
+
+        stop = timeit.default_timer()
+        print("Took %s seconds to capture images" % str(stop - start))
 
         return color_image, depth_image
         

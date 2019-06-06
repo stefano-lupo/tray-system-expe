@@ -11,11 +11,11 @@ from core.config import IMAGE_SEGMENT_SIZE_PX
 WIDTH = 1280
 HEIGHT = 720
 INGREDIENT = "cutlery"
-TRAINING_IMAGE_DIR = "./training_images"
+TRAINING_IMAGE_DIR = "./training_images_tmp"
 ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, INGREDIENT)
 
 EVAL_SPLIT_SIZE = 0.2
-OUTPUT_DIR = "split_training_images_{}".format(IMAGE_SEGMENT_SIZE_PX)
+OUTPUT_DIR = "split_training_images_cleaned_{}".format(IMAGE_SEGMENT_SIZE_PX)
 
 
 def sample_image(rgbImage: np.ndarray, segmented_circle: SegmentedCircle, target_dir: str, start_id: int):
@@ -28,6 +28,23 @@ def sample_image(rgbImage: np.ndarray, segmented_circle: SegmentedCircle, target
 
 
 
+# def generate_samples():
+#     circle_detector: CircleDetector = CircleDetector()
+#     for ingredient_dir in os.listdir(TRAINING_IMAGE_DIR):
+#         full_ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, ingredient_dir)
+#         skip = 0
+#         for image_dir in os.listdir(full_ingredient_dir):
+#             full_image_dir = os.path.join(full_ingredient_dir, image_dir)
+#             img = cv.imread(os.path.join(full_image_dir, "raw.jpg"))
+#
+#             target_dir = os.path.join(OUTPUT_DIR, ingredient_dir)
+#             print("Using target dir %s" % target_dir)
+#
+#             os.makedirs(target_dir, exist_ok=True)
+#             segmented_circles = circle_detector.get_segmented_circles(img)
+#             [sample_image(img, sc, target_dir, skip) for sc in segmented_circles]
+#             skip = skip + len(segmented_circles[0].segments)
+
 def generate_samples():
     circle_detector: CircleDetector = CircleDetector()
     for ingredient_dir in os.listdir(TRAINING_IMAGE_DIR):
@@ -36,14 +53,25 @@ def generate_samples():
         for image_dir in os.listdir(full_ingredient_dir):
             full_image_dir = os.path.join(full_ingredient_dir, image_dir)
             img = cv.imread(os.path.join(full_image_dir, "raw.jpg"))
+            copy = np.copy(img)
+            circle_detector.draw_segmented_circle(copy)
+            cv.imshow("img", copy)
+            looping = True
+            while looping:
+                key = cv.waitKey(1) & 0xFF
+                if key == ord(' '):
+                    looping = False
+                elif key == ord('s'):
+                    target_dir = os.path.join(OUTPUT_DIR, ingredient_dir)
+                    print("Using target dir %s" % target_dir)
 
-            target_dir = os.path.join(OUTPUT_DIR, ingredient_dir)
-            print("Using target dir %s" % target_dir)
+                    os.makedirs(target_dir, exist_ok=True)
+                    segmented_circles = circle_detector.get_segmented_circles(img)
+                    [sample_image(img, sc, target_dir, skip) for sc in segmented_circles]
+                    skip = skip + len(segmented_circles[0].segments)
+                    looping = False
+                    shutil.rmtree(full_image_dir)
 
-            os.makedirs(target_dir, exist_ok=True)
-            segmented_circles = circle_detector.get_segmented_circles(img)
-            [sample_image(img, sc, target_dir, skip) for sc in segmented_circles]
-            skip = skip + len(segmented_circles[0].segments)
 
 def train_test_split():
     train_dir = os.path.join(OUTPUT_DIR, "train")
@@ -72,8 +100,48 @@ def train_test_split():
         for t in train:
             name = os.path.join(OUTPUT_DIR, ingredient_dir, t)
             os.rename(name, os.path.join(train_dir, ingredient_dir, t))
-
-
+#
+#
+# def clean():
+#     # tmp_dir = "training_images_tmp"
+#     base_dir = "training_images_tmp"
+#     target_dir = "training_images"
+#
+#     circle_detector = CircleDetector()
+#
+#     for ingredient in os.listdir(base_dir):
+#         ing_dir = os.path.join(base_dir, ingredient)
+#         for img_dir in os.listdir(ing_dir):
+#             full_img_dir = os.path.join(ing_dir, img_dir)
+#             filename = os.path.join(full_img_dir, "raw.jpg")
+#             img = cv.imread(filename)
+#             copy = np.copy(img)
+#             # print(img.shape)
+#             # print(str(img.shape[0] / factor) + "," + str(img.shape[1] / factor))
+#
+#             # img = cv2.resize(img, (320, 180))
+#             circle_detector.draw_segmented_circle(copy)
+#
+#             # small 50 -100
+#             cv.imshow("image", copy)
+#             while True:
+#                 key = cv.waitKey(1)
+#                 if key & 0xFF == ord('s'):
+#                     path = os.path.join(target_dir, ingredient, img_dir)
+#                     os.makedirs(path, exist_ok=True)
+#                     full_path = os.path.join(path, "raw.jpg")
+#                     cv.imwrite(full_path, img)
+#                     print("Saved %s" % full_path)
+#                     print("Removing %s" % full_img_dir)
+#                     shutil.rmtree(full_img_dir)
+#                     break
+#                 elif key & 0xFF == ord(' '):
+#                     break
+#                 elif key & 0xFF == ord('r'):
+#                     rm_dir = os.path.join(target_dir, ingredient, img_dir)
+#                     shutil.move(rm_dir, os.path.join(tmp_dir, ingredient, img_dir))
+#                     print("Removing %s" % rm_dir)
+#                     break
 
 
 def get_images(next_id: int = 0):
@@ -133,13 +201,13 @@ def get_images(next_id: int = 0):
 
 
 if __name__ == "__main__":
-    next_id = 0
-    if not os.path.exists(ingredient_dir):
-        os.mkdir(ingredient_dir)
-    else:
-        dirs = os.listdir(ingredient_dir)
-        dirs = [int(d) for d in dirs]
-        next_id = 0 if len(dirs) == 0 else max(dirs) + 1
+    # next_id = 0
+    # if not os.path.exists(ingredient_dir):
+    #     os.mkdir(ingredient_dir)
+    # else:
+    #     dirs = os.listdir(ingredient_dir)
+    #     dirs = [int(d) for d in dirs]
+    #     next_id = 0 if len(dirs) == 0 else max(dirs) + 1
 
     generate_samples()
     # train_test_split()

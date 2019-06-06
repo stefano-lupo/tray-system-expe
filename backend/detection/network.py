@@ -1,5 +1,5 @@
 import numpy as np
-
+import timeit
 from keras import models
 from keras.layers import Conv2D, Dense, Flatten
 
@@ -7,7 +7,7 @@ from core.config import IMAGE_SEGMENT_SIZE_PX, NUM_CLASSES, SMALL_MODEL, RES_NET
 
 class Network:
 
-    def __init__(self, network="small"):
+    def __init__(self, network="resnet"):
 
         model_file = RES_NET_MODEL if network == "resnet" else SMALL_MODEL
 
@@ -29,6 +29,9 @@ class Network:
         # self.model = model
 
     def predict(self, img: np.ndarray):
+        start = timeit.default_timer()
         vals = self.model.predict(img)
+        stop = timeit.default_timer()
+        print("Took %s seconds for forward pass" % str(stop - start))
         # print(vals)
         return vals

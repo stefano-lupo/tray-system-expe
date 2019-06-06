@@ -19,7 +19,7 @@ from backend.database.daos.detected_ingredients_dao import DetectedIngredientsDa
 from backend.database.daos.images_dao import ImagesDao
 from backend.database.daos.scans_dao import ScansDao
 from backend.database.daos.master_dao import MasterDao
-from backend.detection.detector import Detector
+# from backend.detection.detector import Detector
 from backend.detection.scan_handler import ScanHandler
 
 from io import BytesIO
@@ -30,7 +30,7 @@ scans_dao: ScansDao = ScansDao()
 detected_ingredients_dao: DetectedIngredientsDao = DetectedIngredientsDao()
 master_dao: MasterDao = MasterDao()
 
-detector: Detector = Detector()
+# detector: Detector = Detector()
 scan_handler: ScanHandler = ScanHandler()
 
 

@@ -1,6 +1,7 @@
 import cv2 as cv
 import base64
 import os
+import timeit
 from uuid import uuid4
 
 from backend.database.daos.detected_ingredients_dao import DetectedIngredientsDao
@@ -40,7 +41,11 @@ class ScanHandler:
 
     def handle_local_scan(self, scan_request) -> int:
         filename, full_path = compute_file_name()
+
+        start = timeit.default_timer()
         cv.imwrite(full_path, scan_request.image)
+        stop = timeit.default_timer()
+        print("Took %s seconds to write image" % str(stop - start))
         return self.handle_scan(scan_request, filename)
 
     def handle_scan(self, scan_request, image_path) -> int:
@@ -50,7 +55,11 @@ class ScanHandler:
         scan = Scan.from_scan_request(scan_request, image_id)
         scan.id = self.scans_dao.insert_scans([scan])
 
+        start = timeit.default_timer()
         detected_ingredients: List[DetectedIngredient] = self.detector.run_detection(scan_request, scan.id)
+        stop = timeit.default_timer()
+        print("Took %s to detect all ingredients" % (stop - start))
+        
         self.detected_ingredients_dao.insert_detected_ingredients(detected_ingredients)
 
         return scan.id

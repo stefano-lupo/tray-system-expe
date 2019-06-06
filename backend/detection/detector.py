@@ -14,6 +14,7 @@ from core.dao_models.ingredient import Ingredient
 from core.dao_models.detection import Detection
 from core.dao_models.detected_ingredient import DetectedIngredient
 
+EMPTY_PLATE_ID = 3
 
 def calculate_mass(depth_map: np.ndarray, segment: Segment, mm_per_pixel: int) -> int:
     # mass = int(np.average(segment.get_segment_of(depth_map)) * DEPTH_UNIT_SCALE_FACTOR * segment.get_area())
@@ -21,8 +22,8 @@ def calculate_mass(depth_map: np.ndarray, segment: Segment, mm_per_pixel: int) -
     average_depth = int(np.average(segment.get_segment_of(depth_map)))
     # masses.append(mass)
     # return mass
-
-    return int(np.average(segment.get_segment_of(depth_map)))
+    return average_depth
+    # return int(np.average(segment.get_segment_of(depth_map)))
 
 class Detector:
     def __init__(self):
@@ -34,18 +35,26 @@ class Detector:
 
         depth_map = np.array(scan_request.depth_map)
         segmented_circles: List[SegmentedCircle] = self.circle_detector.get_segmented_circles(image)
+        if len(segmented_circles) > 1:
+            print("WARN: Found more than one circle")
 
         detected_ingredients: Dict[Ingredient, List[Detection]] = defaultdict(list)
         for segmented_circle in segmented_circles:
-            segmented_circle.draw(image)
-            # radius_pixels = segmented_circle.circle.r
-            # mm_per_pixel = (PLATE_DIAMETER_MM / 2) / radius_pixels
-            # max_depth_in_circle = segmented_circle.get_max_value_in_circle(depth_map)
-            # print("Max depth in circle was %d" % max_depth_in_circle)
-            # depth_map = max_depth_in_circle - depth_map
+            # segmented_circle.draw(image)
+
+            radius_pixels = segmented_circle.circle.r
+            mm_per_pixel = (PLATE_DIAMETER_MM / 2) / radius_pixels
+            max_depth_in_circle = segmented_circle.get_max_value_in_circle(depth_map)
+            print("Max depth in circle was %d" % max_depth_in_circle)
+            print("mm per pixel was %d" % mm_per_pixel)
+
+            # Mutating datastructures here
+            self.ingredient_detector.transform_image_for_classification(image)
+            depth_map = max_depth_in_circle - depth_map
+
             for segment in segmented_circle.segments:
                 ingredient = self.ingredient_detector.label(segment.get_segment_of(image))
-                if ingredient is None:
+                if ingredient is None or ingredient is EMPTY_PLATE_ID:
                     continue
                 mass = calculate_mass(depth_map, segment, mm_per_pixel)
                 print(mass)

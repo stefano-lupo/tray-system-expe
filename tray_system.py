@@ -60,8 +60,7 @@ class TraySystem:
             return
         
         colour_img, depth_img = self.realsense_capturer.capture()
-        print(colour_img.shape)
-        print(depth_img.shape)  
+        print(colour_img.shape) 
         menu_item_id = 1 # Get this from RFID
         user_id = 1
         scan_request = ScanRequest(colour_img, depth_img, menu_item_id, user_id)

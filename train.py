@@ -11,11 +11,11 @@ from core.config import IMAGE_SEGMENT_SIZE_PX
 WIDTH = 1280
 HEIGHT = 720
 INGREDIENT = "cutlery"
-TRAINING_IMAGE_DIR = "./extra_images"
+TRAINING_IMAGE_DIR = "./dataset"
 ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, INGREDIENT)
 
 EVAL_SPLIT_SIZE = 0.2
-OUTPUT_DIR = "extra_images_{}".format(IMAGE_SEGMENT_SIZE_PX)
+OUTPUT_DIR = "dataset_split_{}".format(IMAGE_SEGMENT_SIZE_PX)
 
 
 def sample_image(rgbImage: np.ndarray, segmented_circle: SegmentedCircle, target_dir: str, start_id: int):
@@ -57,20 +57,20 @@ def generate_samples():
             circle_detector.draw_segmented_circle(copy)
             cv.imshow("img", copy)
             looping = True
-            while looping:
-                key = cv.waitKey(1) & 0xFF
-                if key == ord(' '):
-                    looping = False
-                elif key == ord('s'):
-                    target_dir = os.path.join(OUTPUT_DIR, ingredient_dir)
-                    print("Using target dir %s" % target_dir)
+            # while looping:
+            #     key = cv.waitKey(1) & 0xFF
+            #     if key == ord(' '):
+            #         looping = False
+            #     elif key == ord('s'):
+            target_dir = os.path.join(OUTPUT_DIR, ingredient_dir)
+            print("Using target dir %s" % target_dir)
 
-                    os.makedirs(target_dir, exist_ok=True)
-                    segmented_circles = circle_detector.get_segmented_circles(img)
-                    [sample_image(img, sc, target_dir, skip) for sc in segmented_circles]
-                    skip = skip + len(segmented_circles[0].segments)
-                    looping = False
-                    shutil.rmtree(full_image_dir)
+            os.makedirs(target_dir, exist_ok=True)
+            segmented_circles = circle_detector.get_segmented_circles(img)
+            [sample_image(img, sc, target_dir, skip) for sc in segmented_circles]
+            skip = skip + len(segmented_circles[0].segments)
+            # looping = False
+                    # shutil.rmtree(full_image_dir)
 
 
 def train_test_split():
@@ -210,7 +210,7 @@ if __name__ == "__main__":
         next_id = 0 if len(dirs) == 0 else max(dirs) + 1
 
     # generate_samples()
-    # train_test_split()
+    train_test_split()
     #
     # print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
-    get_images(next_id)
+    # get_images(next_id)

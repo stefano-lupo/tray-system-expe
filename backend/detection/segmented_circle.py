@@ -21,7 +21,7 @@ class Segment:
         return (self.x2 - self.x1) * (self.y2 - self.y1)
 
     def get_segment_of_image(self, image: np.ndarray) -> np.ndarray:
-        print(image.shape)
+        # print(image.shape)
         pixels = image[self.y1:self.y2, self.x1: self.x2, :]
         # print(pixels.shape)
         # cv.imshow("tmp", pixels)
@@ -30,6 +30,7 @@ class Segment:
 
     def draw_segment(self, image, colour=(125, 100, 0), thickness=0, pad=0):
         cv.rectangle(image, (self.x1 + pad, self.y1 + pad), (self.x2 - pad, self.y2 - pad), colour, thickness)
+        # return None
 
 
 class SegmentedCircle:

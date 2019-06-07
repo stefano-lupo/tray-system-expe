@@ -46,8 +46,8 @@ class CircleDetector:
 
     def get_segmented_circles(self, image: np.ndarray) -> List[SegmentedCircle]:
         start = timeit.default_timer()
-        image = cv2.resize(image, (640, 360))
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        resized = cv2.resize(image, (640, 360))
+        gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
         min_dist_centers = 640
         min_radius = 100
         max_radius = 200
@@ -72,7 +72,7 @@ class CircleDetector:
 
         if circles is None:
             return []
-        print(circles[0])
+        # print(circles[0])
         circles = [Circle(c * 2) for c in circles]
 
         segmented_circles: List[SegmentedCircle] = []
@@ -81,7 +81,7 @@ class CircleDetector:
             segmented_circles.append(self.get_segmented_circle(circle))
 
         stop = timeit.default_timer()
-        print("Segmenting circles took %d" % (stop - start))
+        # print("Segmenting circles took %d" % (stop - start))
         return segmented_circles
 
     # TODO: Multithread
@@ -105,6 +105,6 @@ class CircleDetector:
 
     def draw_segmented_circle(self, image):
         segmented_circles: List[SegmentedCircle] = self.get_segmented_circles(image)
-        print("Found %d circles" % len(segmented_circles)) 
+        # print("Found %d circles" % len(segmented_circles))
         for segmented_circle in segmented_circles:
             segmented_circle.draw(image)

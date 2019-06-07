@@ -11,11 +11,11 @@ from core.config import IMAGE_SEGMENT_SIZE_PX
 WIDTH = 1280
 HEIGHT = 720
 INGREDIENT = "cutlery"
-TRAINING_IMAGE_DIR = "./training_images_tmp"
+TRAINING_IMAGE_DIR = "./extra_images"
 ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, INGREDIENT)
 
 EVAL_SPLIT_SIZE = 0.2
-OUTPUT_DIR = "split_training_images_cleaned_{}".format(IMAGE_SEGMENT_SIZE_PX)
+OUTPUT_DIR = "extra_images_{}".format(IMAGE_SEGMENT_SIZE_PX)
 
 
 def sample_image(rgbImage: np.ndarray, segmented_circle: SegmentedCircle, target_dir: str, start_id: int):
@@ -197,20 +197,20 @@ def get_images(next_id: int = 0):
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
         
-        sleep(0.4)
+        # sleep(0.4)
 
 
 if __name__ == "__main__":
-    # next_id = 0
-    # if not os.path.exists(ingredient_dir):
-    #     os.mkdir(ingredient_dir)
-    # else:
-    #     dirs = os.listdir(ingredient_dir)
-    #     dirs = [int(d) for d in dirs]
-    #     next_id = 0 if len(dirs) == 0 else max(dirs) + 1
+    next_id = 0
+    if not os.path.exists(ingredient_dir):
+        os.mkdir(ingredient_dir)
+    else:
+        dirs = os.listdir(ingredient_dir)
+        dirs = [int(d) for d in dirs]
+        next_id = 0 if len(dirs) == 0 else max(dirs) + 1
 
-    generate_samples()
+    # generate_samples()
     # train_test_split()
     #
     # print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
-    # get_images(next_id)
+    get_images(next_id)

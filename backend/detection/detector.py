@@ -49,11 +49,11 @@ class Detector:
             print("mm per pixel was %d" % mm_per_pixel)
 
             # Mutating datastructures here
-            self.ingredient_detector.transform_image_for_classification(image)
+            transformed_image = self.ingredient_detector.transform_image_for_classification(image)
             depth_map = max_depth_in_circle - depth_map
 
             for segment in segmented_circle.segments:
-                ingredient = self.ingredient_detector.label(segment.get_segment_of(image))
+                ingredient = self.ingredient_detector.label(segment.get_segment_of(transformed_image))
                 if ingredient is None or ingredient is EMPTY_PLATE_ID:
                     continue
                 mass = calculate_mass(depth_map, segment, mm_per_pixel)

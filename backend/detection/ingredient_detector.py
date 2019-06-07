@@ -17,19 +17,33 @@ class IngredientDetector:
         self.ingredients: List[Ingredient] = IngredientsDao().get_ingredients()
         self.network = Network()
 
-    def transform_image_for_classification(image: np.ndarray):
+    def transform_image_for_classification(self, image: np.ndarray):
+        copy = np.copy(image)
         try:
-            image = cv.cvtColor(copy, cv.COLOR_BGR2RGB)
+            copy = cv.cvtColor(copy, cv.COLOR_BGR2RGB)
         except:
+            print("Couldnt convert colour")
             return None
-        image = np.expand_dims(copy, axis=0)
-        image = np.true_divide(copy, 255)
 
-        if image.shape != EXPECTED_SHAPE:
+        # image = np.expand_dims(image, axis=0)
+        copy = np.true_divide(copy, 255)
+
+        # if image.shape != EXPECTED_SHAPE:
+        #     print("Skipping as shape was ")
+        #     print(image.shape)
+        #     return None
+        return copy
+
+    def predict(self, sub_image):
+        sub_image = np.expand_dims(sub_image, axis=0)
+        if sub_image.shape != EXPECTED_SHAPE:
             print("Skipping as shape was ")
-            print(image.shape)
+            print(sub_image.shape)
             return None
-        
+
+        return self.network.predict(sub_image)
+
+
     def label(self, sub_image: np.ndarray) -> Ingredient:
         # copy = np.copy(sub_image)
 
@@ -37,8 +51,10 @@ class IngredientDetector:
         #     print("Skipping as copy was empty")
         #     return None
 
-        
-        predictions = self.network.predict(sub_image)
+        predictions = self.predict(sub_image)
+        # print(predictions)
+        if predictions is None:
+            return None
         index = np.argmax(predictions[0])
         return self.ingredients[index]
 

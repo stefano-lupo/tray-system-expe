@@ -1,8 +1,8 @@
 from PIL import Image
 import os
 
-base_dir = "./split_training_images_cleaned_50/"
-test_or_train = "test"
+base_dir = "./dataset_split_50/"
+test_or_train = "train"
 dir = os.path.join(base_dir, test_or_train)
 
 total = 0

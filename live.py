@@ -114,12 +114,12 @@ def run_live(ingredient_detector):
     profile = pipeline.start(config)
     device = profile.get_device()
 
-    advnc_mode = rs.rs400_advanced_mode(device)
-
-    with open("profile.json") as f:
-        res = json.load(f)
-        # print(isinstance(, str))
-        advnc_mode.load_json(json.dumps(res))
+    # advnc_mode = rs.rs400_advanced_mode(device)
+    #
+    # with open("profile.json") as f:
+    #     res = json.load(f)
+    #     # print(isinstance(, str))
+    #     advnc_mode.load_json(json.dumps(res))
 
     colorizer = rs.colorizer()
     hole_filler = rs.hole_filling_filter()
@@ -150,7 +150,7 @@ def run_live(ingredient_detector):
         color_image = np.asanyarray(color.get_data(), dtype=np.uint8)
         color_image_with_overlay = np.copy(color_image)
 
-        cv.imwrite("rgb.jpg", color_image)
+        # cv.imwrite("rgb.jpg", color_image)
         # cv.imwrite("depth.jpg", depth_image)
 
         process_colour_image(color_image_with_overlay, ingredient_detector)
@@ -173,7 +173,7 @@ def run_live(ingredient_detector):
 
         cv.imshow("Depth", depth_image)
         cv.imshow("RGB", color_image_with_overlay)
-        sleep(0.2)
+        # sleep(0.2)
         # return
 
 

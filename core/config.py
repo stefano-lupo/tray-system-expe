@@ -21,7 +21,7 @@ NUM_CLASSES = 9
 SMALL_MODEL = "models/small_cnn.h5"
 RES_NET_MODEL = "models/res_net_50.h5"
 CUSTOM_MODEL = "models/custom_90_perc.h5"
-FINAL_MODEL = "models/dataset_final.h5"
+FINAL_MODEL = "models/expe_model.h5"
 
 CIRCLE_DETECT_MIN_RADIUS = 50
 CIRCLE_DETECT_MIN_DISTANCE_BETWEEN_CENTERS = 50

@@ -1,19 +1,20 @@
 import os
-import pyrealsense2 as rs
-import numpy as np
-import cv2 as cv
 import shutil
-from time import sleep
-from backend.detection.circle_detector import CircleDetector
-from backend.detection.segmented_circle import Segment, SegmentedCircle
-from core.config import IMAGE_SEGMENT_SIZE_PX
 
-WIDTH = 1280
-HEIGHT = 720
+import cv2 as cv
+import numpy as np
+import pyrealsense2 as rs
+
+from backend.detection.circle_detector import CircleDetector
+from backend.detection.segmented_circle import SegmentedCircle
+from core.config import IMAGE_SEGMENT_SIZE_PX, REALSENSE_WIDTH as WIDTH, REALSENSE_HEIGHT as HEIGHT
+
+# Set this before taking training images of a certain class
 INGREDIENT = "cutlery"
 TRAINING_IMAGE_DIR = "./dataset"
 ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, INGREDIENT)
 
+# Deterministically name output dataset
 EVAL_SPLIT_SIZE = 0.2
 OUTPUT_DIR = "dataset_split_{}".format(IMAGE_SEGMENT_SIZE_PX)
 
@@ -45,7 +46,12 @@ def sample_image(rgbImage: np.ndarray, segmented_circle: SegmentedCircle, target
 #             [sample_image(img, sc, target_dir, skip) for sc in segmented_circles]
 #             skip = skip + len(segmented_circles[0].segments)
 
-def generate_samples():
+
+"""
+Use this to split a directory of images into the sub samples
+This creates a new directory with the sub sampled images
+"""
+def sub_sample_training_images():
     circle_detector: CircleDetector = CircleDetector()
     for ingredient_dir in os.listdir(TRAINING_IMAGE_DIR):
         full_ingredient_dir = os.path.join(TRAINING_IMAGE_DIR, ingredient_dir)
@@ -53,15 +59,6 @@ def generate_samples():
         for image_dir in os.listdir(full_ingredient_dir):
             full_image_dir = os.path.join(full_ingredient_dir, image_dir)
             img = cv.imread(os.path.join(full_image_dir, "raw.jpg"))
-            copy = np.copy(img)
-            circle_detector.draw_segmented_circle(copy)
-            cv.imshow("img", copy)
-            looping = True
-            # while looping:
-            #     key = cv.waitKey(1) & 0xFF
-            #     if key == ord(' '):
-            #         looping = False
-            #     elif key == ord('s'):
             target_dir = os.path.join(OUTPUT_DIR, ingredient_dir)
             print("Using target dir %s" % target_dir)
 
@@ -69,11 +66,17 @@ def generate_samples():
             segmented_circles = circle_detector.get_segmented_circles(img)
             [sample_image(img, sc, target_dir, skip) for sc in segmented_circles]
             skip = skip + len(segmented_circles[0].segments)
-            # looping = False
-                    # shutil.rmtree(full_image_dir)
 
 
+"""
+Use to split directory of sub sampled images into 
+a training and testing set
+This creates a train and test dir inside of the target sub sampled images dir
+It also leaves behind the old empty ingredient dirs as I am lazy
+"""
 def train_test_split():
+
+    # Nuke dirs and remake if they already exist
     train_dir = os.path.join(OUTPUT_DIR, "train")
     test_dir = os.path.join(OUTPUT_DIR, "test")
     if os.path.exists(train_dir):
@@ -83,11 +86,16 @@ def train_test_split():
     ingredient_dirs = os.listdir(OUTPUT_DIR)
     os.mkdir(train_dir)
     os.mkdir(test_dir)
+
     for ingredient_dir in ingredient_dirs:
         os.mkdir(os.path.join(train_dir, ingredient_dir))
         os.mkdir(os.path.join(test_dir, ingredient_dir))
         images = os.listdir(os.path.join(OUTPUT_DIR, ingredient_dir))
+
+        # Shuffle for randomness
         np.random.shuffle(images)
+
+        # Just grab first EVAL_SPLIT_SIZE % of shuffled array to use as test samples
         test_index = int(len(images) * EVAL_SPLIT_SIZE)
         test = images[:test_index]
         train = images[test_index:]
@@ -100,51 +108,13 @@ def train_test_split():
         for t in train:
             name = os.path.join(OUTPUT_DIR, ingredient_dir, t)
             os.rename(name, os.path.join(train_dir, ingredient_dir, t))
-#
-#
-# def clean():
-#     # tmp_dir = "training_images_tmp"
-#     base_dir = "training_images_tmp"
-#     target_dir = "training_images"
-#
-#     circle_detector = CircleDetector()
-#
-#     for ingredient in os.listdir(base_dir):
-#         ing_dir = os.path.join(base_dir, ingredient)
-#         for img_dir in os.listdir(ing_dir):
-#             full_img_dir = os.path.join(ing_dir, img_dir)
-#             filename = os.path.join(full_img_dir, "raw.jpg")
-#             img = cv.imread(filename)
-#             copy = np.copy(img)
-#             # print(img.shape)
-#             # print(str(img.shape[0] / factor) + "," + str(img.shape[1] / factor))
-#
-#             # img = cv2.resize(img, (320, 180))
-#             circle_detector.draw_segmented_circle(copy)
-#
-#             # small 50 -100
-#             cv.imshow("image", copy)
-#             while True:
-#                 key = cv.waitKey(1)
-#                 if key & 0xFF == ord('s'):
-#                     path = os.path.join(target_dir, ingredient, img_dir)
-#                     os.makedirs(path, exist_ok=True)
-#                     full_path = os.path.join(path, "raw.jpg")
-#                     cv.imwrite(full_path, img)
-#                     print("Saved %s" % full_path)
-#                     print("Removing %s" % full_img_dir)
-#                     shutil.rmtree(full_img_dir)
-#                     break
-#                 elif key & 0xFF == ord(' '):
-#                     break
-#                 elif key & 0xFF == ord('r'):
-#                     rm_dir = os.path.join(target_dir, ingredient, img_dir)
-#                     shutil.move(rm_dir, os.path.join(tmp_dir, ingredient, img_dir))
-#                     print("Removing %s" % rm_dir)
-#                     break
 
 
-def get_images(next_id: int = 0):
+"""
+Use to take images for training set
+Be sure to set INGREDIENT appropriately
+"""
+def capture_images(next_id: int = 0):
     # Set up camera
     pipeline = rs.pipeline()
     config = rs.config()
@@ -159,29 +129,23 @@ def get_images(next_id: int = 0):
         pipeline.wait_for_frames()
 
     circle_detector: CircleDetector = CircleDetector()
-    # colorizer = rs.colorizer()
-    # hole_filler = rs.hole_filling_filter()
 
     while True:
         frames = pipeline.wait_for_frames(timeout_ms=5000)
         color = frames.get_color_frame()
 
-        depth = 1
-        # depth = frames.get_depth_frame()
-        # depth = hole_filler.process(depth)
-
-        if not depth or not color:
+        if not color:
+            print("Got bad colour frame, skipping..")
             continue
 
-        # depth_image = np.asanyarray(colorizer.colorize(depth).get_data())
         color_image = np.asanyarray(color.get_data(), dtype=np.uint8)
 
+        # Keep copy of image for visualization
         color_image_with_grid = np.copy(color_image)
         circle_detector.draw_segmented_circle(color_image_with_grid)
-
-        # cv.imshow("Depth", depth_image)
         cv.imshow("RGB", color_image_with_grid)
 
+        # Hit space to capture image
         if cv.waitKey(1) & 0xFF == ord(' '):
             target_dir = os.path.join(ingredient_dir, str(next_id))
             if os.path.exists(target_dir):
@@ -189,15 +153,13 @@ def get_images(next_id: int = 0):
             else:
                 os.mkdir(target_dir)
             name = os.path.join(target_dir, "raw.jpg")
-            print("Capture %s " % name)
+            print("Captured %s " % name)
 
             cv.imwrite(name, color_image)
             next_id = next_id + 1
 
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
-        
-        # sleep(0.4)
 
 
 if __name__ == "__main__":
@@ -209,8 +171,12 @@ if __name__ == "__main__":
         dirs = [int(d) for d in dirs]
         next_id = 0 if len(dirs) == 0 else max(dirs) + 1
 
-    # generate_samples()
-    train_test_split()
-    #
-    # print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
-    # get_images(next_id)
+    print("Starting for %s with next_id = %d" % (INGREDIENT, next_id))
+
+    # Run these one at a time in this order.
+    capture_images(next_id)         # Capture new training images
+
+    # sub_sample_training_images()    # Sub sample existing images
+
+    # train_test_split()              # Split into training and test set
+

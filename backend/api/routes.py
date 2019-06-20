@@ -13,7 +13,6 @@ from backend.database.daos.images_dao import ImagesDao
 from backend.database.daos.master_dao import MasterDao
 from backend.database.daos.scans_dao import ScansDao
 # from backend.detection.detector import Detector
-from backend.detection.scan_handler import ScanHandler
 from core.config import UPLOAD_DIR
 from core.endpoints import Endpoint
 from . import app
@@ -23,14 +22,17 @@ scans_dao: ScansDao = ScansDao()
 detected_ingredients_dao: DetectedIngredientsDao = DetectedIngredientsDao()
 master_dao: MasterDao = MasterDao()
 
+# We only need CNN in memory if we are not computing locally
+# Code is here for it but it's unnecessary overhead if were are computing locally
 # detector: Detector = Detector()
 # scan_handler: ScanHandler = ScanHandler()
 
 
-@app.route(Endpoint.SCAN.get_without_prefix(), methods=["POST"])
-def scan_route():
-    json = request.form['json']
-    image = request.files['image']
+#
+# @app.route(Endpoint.SCAN.get_without_prefix(), methods=["POST"])
+# def scan_route():
+#     json = request.form['json']
+#     image = request.files['image']
 
     # return scan_handler.handle_endpoint_scan(image, json)
 
@@ -98,6 +100,11 @@ def get_image():
     return redirect("/static/images/{}".format(file_name))
 
 
+
+"""
+Deprecated in favour of doing this client side in Three JS
+Used to server overlayed detections for a given scan_id,
+"""
 @app.route(Endpoint.DETECTIONS_IMAGE.get_without_prefix(), methods=["GET"])
 def get_image_with_detections():
     scan_id = request.args.get('scan_id')

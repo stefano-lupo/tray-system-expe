@@ -1,3 +1,8 @@
+##################################
+# Creates database and tables
+# Creates some test data
+##################################
+
 import mysql.connector as mysql
 import numpy as np
 import cv2 as cv
@@ -5,6 +10,7 @@ import cv2 as cv
 from core.scan_request import ScanRequest
 from core.config import DB_CONFIG
 
+# Sneaky way to handle running init script if DB is created or not
 try:
     db = mysql.connect(**DB_CONFIG)
     cursor = db.cursor(dictionary=True, buffered=True)

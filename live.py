@@ -171,9 +171,16 @@ def run_live(ingredient_detector):
 
         check_for_key()
 
-        cv.imshow("Depth", depth_image)
-        cv.imshow("RGB", color_image_with_overlay)
-        # sleep(0.2)
+        depth = "Depth"
+        rgb = "RGB"
+        cv.namedWindow(depth, cv.WINDOW_NORMAL)
+        cv.resizeWindow(depth, 640, 360)
+        cv.imshow(depth, depth_image)
+
+        cv.namedWindow(rgb, cv.WINDOW_NORMAL)
+        cv.resizeWindow(rgb, 640, 360)
+        cv.imshow(rgb, color_image_with_overlay)
+        sleep(0.2)
         # return
 
 

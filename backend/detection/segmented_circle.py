@@ -22,7 +22,10 @@ class Segment:
 
     def get_segment_of_image(self, image: np.ndarray) -> np.ndarray:
         # print(image.shape)
-        pixels = image[self.y1:self.y2, self.x1: self.x2, :]
+        if len(image.shape) > 2:
+            pixels = image[self.y1:self.y2, self.x1: self.x2, :]
+        else:
+            pixels = image[self.y1:self.y2, self.x1: self.x2]
         # print(pixels.shape)
         # cv.imshow("tmp", pixels)
         # cv.waitKey(1)
@@ -47,7 +50,11 @@ class SegmentedCircle:
     
     def get_max_value_in_circle(self, depth_image):
         segment_pixels = self.get_segments_of_image(depth_image)
+        if len(segment_pixels) == 0:
+            return -1
         max_value = np.max([np.max(s) for s in segment_pixels])
+        print("Max vallue %0.5d" % max_value)
+        print("Max value in depth map {0:.2f}".format(round(max_value, 2)))
         return max_value
 
     def draw(self, image: np.ndarray):

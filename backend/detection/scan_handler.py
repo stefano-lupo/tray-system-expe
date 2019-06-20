@@ -3,6 +3,8 @@ import base64
 import os
 import timeit
 from uuid import uuid4
+from typing import List
+import requests
 
 from backend.database.daos.detected_ingredients_dao import DetectedIngredientsDao
 from backend.database.daos.images_dao import ImagesDao
@@ -10,9 +12,10 @@ from backend.database.daos.scans_dao import ScansDao
 from backend.database.daos.master_dao import MasterDao
 from backend.detection.detector import Detector
 from core.dao_models.scan import Scan
+from core.dao_models.detected_ingredient import DetectedIngredient
 from backend.database.daos.images_dao import ImagesDao
 from core.scan_request import ScanRequest
-from core.config import UPLOAD_DIR
+from core.config import UPLOAD_DIR, LORENZO_URL
 
 def compute_file_name() -> str:
     # Comptue file name
@@ -61,5 +64,8 @@ class ScanHandler:
         print("Took %s to detect all ingredients" % (stop - start))
         
         self.detected_ingredients_dao.insert_detected_ingredients(detected_ingredients)
-
+        score = sum([di.get_total_waste() for di in detected_ingredients])
+        print("Had food waste score {}", score)
+        r = requests.post(LORENZO_URL + "/" + str(scan.id), data={'score': score})
+        print("Lorenzo response: {} - {}", r.status_code, r.reason)
         return scan.id

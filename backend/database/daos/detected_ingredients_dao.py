@@ -31,7 +31,11 @@ class DetectedIngredientsDao(BaseDao):
         if len(detected_ingredients) == 0:
             print("No ingredients detected, skipping")
             return -1
-        return self.insert([d.get_as_json() for d in detected_ingredients])
+        to_insert = []
+        for d in detected_ingredients:
+            json = d.get_as_json()
+            to_insert.append(json)
+        return self.insert(to_insert)
 
 
 if __name__ == "__main__":

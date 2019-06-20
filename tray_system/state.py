@@ -7,6 +7,7 @@ class State(Enum):
     ROLLER_FEEDING = 4,
     DOOR_CLOSING = 5,
     IMAGE_START = 6,
+    IMAGE_ANALYZING = 12,
     IMAGE_FINISHED = 7,
     LOWERING = 8,
     LOWERING_ERROR = 9,
@@ -38,11 +39,11 @@ class StatePacket:
         print("Had state_string: %s, data_string %s" % (state_string, data_string))
 
         try:
-            print("Getting from enum %s" % state_string)
+            # print("Getting from enum %s" % state_string)
             state: State = State[state_string]
-            print("Parsed state was %s" % state.name)
+            # print("Parsed state was %s" % state.name)
         except KeyError:
-            print("Unable to create state from %s" % state_string)
+            print("ARDUINO LOG: %s" % state_string)
             return cls(State.UNKNOWN)
 
         print("State: %s" % state.name)

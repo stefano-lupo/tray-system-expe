@@ -1,29 +1,22 @@
-import os
-import base64
-from uuid import uuid4
-from typing import List, Dict
-from flask import request, jsonify, send_file, redirect, abort
-import cv2 as cv
 import json
-import numpy as np
+import os
+from io import BytesIO
+from typing import Dict
 
-from core.config import UPLOAD_DIR
-from . import app
-from core.dao_models.detected_ingredient import DetectedIngredient
-from core.dao_models.scan import Scan
-from core.endpoints import Endpoint
-from core.scan_request import ScanRequest
-from core.dao_models.master_query_result import MasterQueryResult
+import cv2 as cv
+import numpy as np
+from PIL import Image
+from flask import request, jsonify, send_file, redirect, abort
 
 from backend.database.daos.detected_ingredients_dao import DetectedIngredientsDao
 from backend.database.daos.images_dao import ImagesDao
-from backend.database.daos.scans_dao import ScansDao
 from backend.database.daos.master_dao import MasterDao
+from backend.database.daos.scans_dao import ScansDao
 # from backend.detection.detector import Detector
 from backend.detection.scan_handler import ScanHandler
-
-from io import BytesIO
-from PIL import Image
+from core.config import UPLOAD_DIR
+from core.endpoints import Endpoint
+from . import app
 
 images_dao: ImagesDao = ImagesDao()
 scans_dao: ScansDao = ScansDao()
@@ -31,7 +24,7 @@ detected_ingredients_dao: DetectedIngredientsDao = DetectedIngredientsDao()
 master_dao: MasterDao = MasterDao()
 
 # detector: Detector = Detector()
-scan_handler: ScanHandler = ScanHandler()
+# scan_handler: ScanHandler = ScanHandler()
 
 
 @app.route(Endpoint.SCAN.get_without_prefix(), methods=["POST"])
@@ -39,7 +32,7 @@ def scan_route():
     json = request.form['json']
     image = request.files['image']
 
-    return scan_handler.handle_endpoint_scan(image, json)
+    # return scan_handler.handle_endpoint_scan(image, json)
 
     # filename = base64.urlsafe_b64encode(uuid4().bytes)
     # filename = filename.strip(b'=').decode('ascii')
@@ -86,8 +79,8 @@ def get_detection_by_scan_id():
     scan_id = request.args.get('scan_id')
     if scan_id is None:
         abort(400, "A scan id must be provided")
-
-    as_dict = {k: v.get_as_dict() for (k, v) in master_dao.get_detections_by_scan_id(scan_id).items()}
+    scan_id = int(scan_id)
+    as_dict = {k: v.get_as_dict() for (k, v) in master_dao.get_detections_by_scan_id([scan_id]).items()}
     return jsonify(as_dict)
 
 

@@ -6,7 +6,7 @@ class Detection:
     def __init__(self,
                  x: int,
                  y: int,
-                 mass: int,
+                 mass: float,
                  width: int = WIDTH,
                  height: int = HEIGHT):
         self.x = x
@@ -14,6 +14,7 @@ class Detection:
         self.mass = mass
         self.width = width
         self.height = height
+        # print("Setting with and height to %d, %d" % (width, height))
 
     def get_as_dict(self):
         return dict(vars(self))

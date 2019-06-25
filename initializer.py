@@ -82,8 +82,8 @@ def create_db_and_tables():
 
 def create_menu_items():
     # Note this is run as main so can't use relative imports
-    from backend.database.daos.ingredients_dao import IngredientsDao
-    from backend.database.daos.menu_items_dao import MenuItemsDao
+    from backend.database.ingredients_dao import IngredientsDao
+    from backend.database.menu_items_dao import MenuItemsDao
     from core.dao_models.menu_item import MenuItem
     from core.dao_models.ingredient import Ingredient
 

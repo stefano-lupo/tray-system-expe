@@ -8,10 +8,10 @@ import numpy as np
 from PIL import Image
 from flask import request, jsonify, send_file, redirect, abort
 
-from backend.database.daos.detected_ingredients_dao import DetectedIngredientsDao
-from backend.database.daos.images_dao import ImagesDao
-from backend.database.daos.master_dao import MasterDao
-from backend.database.daos.scans_dao import ScansDao
+from backend.database.detected_ingredients_dao import DetectedIngredientsDao
+from backend.database.images_dao import ImagesDao
+from backend.database.master_dao import MasterDao
+from backend.database.scans_dao import ScansDao
 # from backend.detection.detector import Detector
 from core.config import UPLOAD_DIR
 from core.endpoints import Endpoint

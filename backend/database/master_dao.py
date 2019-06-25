@@ -2,7 +2,7 @@ from typing import List, Dict
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from backend.database.daos.base_dao import BaseDao
+from backend.database.base_dao import BaseDao
 from core.dao_models.master_query_result import MasterQueryResult
 from core.dao_models.scan_with_data import ScanWithData
 from core.dao_models.menu_item import MENU_ITEM_NAME_ALIAS, MENU_ITEM_ID_ALIAS

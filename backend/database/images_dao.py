@@ -1,6 +1,6 @@
 from typing import List
 
-from backend.database.daos.base_dao import BaseDao
+from backend.database.base_dao import BaseDao
 from core.dao_models.image import Image
 
 TABLE = "images"

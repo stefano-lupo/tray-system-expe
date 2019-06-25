@@ -6,14 +6,14 @@ from uuid import uuid4
 from typing import List
 import requests
 
-from backend.database.daos.detected_ingredients_dao import DetectedIngredientsDao
-from backend.database.daos.images_dao import ImagesDao
-from backend.database.daos.scans_dao import ScansDao
-from backend.database.daos.master_dao import MasterDao
+from backend.database.detected_ingredients_dao import DetectedIngredientsDao
+from backend.database.images_dao import ImagesDao
+from backend.database.scans_dao import ScansDao
+from backend.database.master_dao import MasterDao
 from backend.detection.detector import Detector
 from core.dao_models.scan import Scan
 from core.dao_models.detected_ingredient import DetectedIngredient
-from backend.database.daos.images_dao import ImagesDao
+from backend.database.images_dao import ImagesDao
 from core.scan_request import ScanRequest
 from core.config import UPLOAD_DIR, LORENZO_URL
 
